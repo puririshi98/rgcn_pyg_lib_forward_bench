@@ -766,7 +766,7 @@ def fuse_batch(batch):
         src_type, dst_type = e_type[0], e_type[-1]
         new_idxs = e_idx_dict[e_type][0]+ increment_dict[src_type]
         e_idx_dict[e_type] = new_idxs[1] + increment_dict[dst_type]
-    edge_types = torch.cat([i * torch.ones_like(e_idx) for i, e_idx in enumerate(e_idx_dict).values()], dim=1)
+    edge_types = torch.cat([i * torch.ones_like(e_idx) for i, e_idx in enumerate(e_idx_dict.values())], dim=1)
     return x, torch.cat(list(e_idx_dict.values()), dim=1), edge_types
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type = fuse_batch(batch)
