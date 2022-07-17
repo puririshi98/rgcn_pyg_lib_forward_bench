@@ -738,8 +738,8 @@ n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = RGCNConv(128, 64, 4)
-        self.conv2 = RGCNConv(64, n_classes, 4)
+        self.conv1 = RGCNConv(128, 64, 8)
+        self.conv2 = RGCNConv(64, n_classes, 8)
 
     def forward(self, x, edge_index, edge_type):
         x = F.relu(self.conv1(x, edge_index, edge_type))
@@ -761,16 +761,17 @@ def fuse_batch(batch):
 
     e_idx_dict = batch.collect('edge_index')
     etypes_list = []
-    print({etype:val.shape for etype,val in e_idx_dict.items()})
     for i, e_type in enumerate(e_idx_dict.keys()):
+        print('etype',e_type)
+        print('numel', torch.numel(e_idx_dict[e_type]))
         if torch.numel(e_idx_dict[e_type]) != 0:
             src_type, dst_type = e_type[0], e_type[-1]
-            new_idxs = e_idx_dict[e_type][0]+ increment_dict[src_type]
-            e_idx_dict[e_type] = new_idxs[1] + increment_dict[dst_type]
+            e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
+            e_idx_dict[e_type][1, :] = e_idx_dict[e_type][0, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones_like(e_idx_dict[e_type]) * i)
+            print("after change numel", torch.numel(e_idx_dict[e_type]))
     print(len(etypes_list))
     print([i.shape for i in etypes_list])
-    print({etype:val.shape for etype,val in e_idx_dict.items()})
     edge_types = torch.cat(etypes_list)
     return x, torch.cat(list(e_idx_dict.values()), dim=1), edge_types
 for i, batch in enumerate(data_object.train_dataloader):
