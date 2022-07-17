@@ -760,13 +760,15 @@ def fuse_batch(batch):
         ctr += num_node_dict[node_type]
 
     e_idx_dict = batch.collect('edge_index')
-    for e_type in e_idx_dict.keys():
+    etypes_list = []
+    for i, e_type in enumerate(e_idx_dict.keys()):
         if torch.numel(e_idx_dict[e_type]) == 0:
             continue
         src_type, dst_type = e_type[0], e_type[-1]
         new_idxs = e_idx_dict[e_type][0]+ increment_dict[src_type]
         e_idx_dict[e_type] = new_idxs[1] + increment_dict[dst_type]
-    edge_types = torch.cat([i * torch.ones_like(e_idx) for i, e_idx in enumerate(e_idx_dict.values())], dim=1)
+        etypes_list.append(torch.ones_like(e_idx_dict[e_type]) * i)
+    edge_types = torch.cat([etypes_list])
     return x, torch.cat(list(e_idx_dict.values()), dim=1), edge_types
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type = fuse_batch(batch)
