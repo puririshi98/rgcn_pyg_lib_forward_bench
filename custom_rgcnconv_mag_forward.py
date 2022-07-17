@@ -748,10 +748,26 @@ class Net(torch.nn.Module):
 model = Net()
 import time
 sumtime = 0
+
+def fuse_batch(batch)
+    x_dict = batch.collect('x')
+    x = torch.cat(list(x_dict.values()), dim=0)
+    num_node_dict = batch.collect('num_nodes')
+    increment_dict = {}
+    ctr = 0
+    for node_type in num_node_dict:
+        increment_dict[node_type] = ctr
+        ctr += num_node_dict[node_type]
+
+    e_idx_dict = batch.collect('edge_index')
+    for e_type in e_idx_dict.keys():
+        src_type, dst_type = e_type[0], e_type[-1]
+        new_idxs = e_idx_dict[e_type][0]+ increment_dict[src_type]
+        e_idx_dict[e_type] = new_idxs[1] + increment_dict[dst_type]
+    edge_types = torch.cat([i * torch.ones_like(e_idx) for i, e_idx in enumerate(e_idx_dict).values()], dim=1)
+    return x, torch.cat(list(e_idx_dict.values()), dim=1), edge_types
 for i, batch in enumerate(data_object.train_dataloader):
-    x = batch.collect('x')
-    edge_index = torch.cat([i for i in dict(batch.collect('edge_index')).values()], dim=1)
-    edge_type = torch.cat([i * torch.ones_like(e_idx) for i, e_idx in enumerate(dict(batch.collect('edge_index')).values())], dim=1)
+    x, edge_index, edge_type = fuse_batch(batch)
     since=time.time()
     out = model(x, edge_index, edge_type)
     sumtime += time.time() - since
