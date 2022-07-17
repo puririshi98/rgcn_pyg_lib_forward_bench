@@ -164,12 +164,18 @@ class RGCNConv(MessagePassing):
                 print('weight[i].shape=',weight[i].shape)
                 out = out + (h @ weight[i])
         else:
-            hs = self.propagate(edge_index, x=x_l, size=size)
-            print('inputs.shape=', hs.shape)
-            ptr = # get ptr from edge_type
+            h = self.propagate(edge_index, x=x_l, size=size)
+            print('inputs.shape=', h.shape)
+            ptr = []
+            ctr = 0
+            for i in self.num_relations:
+                ptr.append(ctr)
+                ctr += torch.sum(edge_type == i)
+            ptr.append(ctr)
+            ptr = torch.tensor(ptr)    
             print('ptr.shape=',ptr.shape)
             print('weight.shape=', weight.shape)
-            out = torch.ops.pyg.segment_matmul(hs, ptr, weight)
+            out = torch.ops.pyg.segment_matmul(h, ptr, weight)
 
         if self.bias is not None:
             out += self.bias
