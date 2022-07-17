@@ -108,7 +108,7 @@ class RGCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
 
-    def forward(self, x, edge_index, edge_type, ptr):
+    def forward(self, x, edge_index, edge_type):
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
@@ -164,7 +164,18 @@ class RGCNConv(MessagePassing):
                 print('weight[i].shape=',weight[i].shape)
                 out = out + (h @ weight[i])
         else:
-            h = self.propagate(edge_index, x=x_l, size=size)
+            ptr = [0]
+            hs = []
+            ctr = 0
+            for i in range(self.num_relations):
+                # print("Relation number:", i)
+                tmp = masked_edge_index(edge_index, edge_type == i)
+                h = self.propagate(tmp, x=x_l, size=size)
+                hs.append(h)
+                ctr += h.shape[0]
+                ptr.append(ctr)
+            h = torch.cat(hs)
+            ptr = torch.tensor(ptr)
             print('inputs.shape=', h.shape)    
             print('ptr=',ptr)
             print('weight.shape=', weight.shape)

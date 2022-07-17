@@ -696,7 +696,7 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv1(x, edge_index, edge_type, ptr))
         x = self.conv2(x, edge_index, edge_type, ptr)
         return F.log_softmax(x, dim=1)
-model = Net(False).to(sys.argv[1])
+model = Net(bool(int(sys.argv[2]))).to(sys.argv[1])
 import time
 sumtime = 0
 
@@ -712,23 +712,19 @@ def fuse_batch(batch):
         ctr += num_node_dict[node_type]
     e_idx_dict = batch.collect('edge_index')
     etypes_list = []
-    ptr = [0]
-    ctr = 0
     for i, e_type in enumerate(e_idx_dict.keys()):
         src_type, dst_type = e_type[0], e_type[-1]
         if torch.numel(e_idx_dict[e_type]) != 0:
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-        ctr += torch.numel(torch.unique(e_idx_dict[e_type][1, :]))
-        ptr.append(ctr)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
-    return x, eidx, edge_types, torch.tensor(ptr)
+    return x, eidx, edge_types
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type, ptr = fuse_batch(batch)
     since=time.time()
-    out = model(x, edge_index, edge_type, ptr)
+    out = model(x, edge_index, edge_type)
     sumtime += time.time() - since
     if i==49:
         break
