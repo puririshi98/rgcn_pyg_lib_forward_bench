@@ -155,13 +155,13 @@ class RGCNConv(MessagePassing):
             for i in range(self.num_relations):
                 # print("Relation number:", i)
                 tmp = masked_edge_index(edge_index, edge_type == i)
-                print('edge_index.shape=',edge_index.shape)
-                print('edge_type.shape=',edge_type.shape)
-                print('tmp.shape=', tmp.shape)
-                print('x_l.shape=', x_l.shape)
+                # print('edge_index.shape=',edge_index.shape)
+                # print('edge_type.shape=',edge_type.shape)
+                # print('tmp.shape=', tmp.shape)
+                # print('x_l.shape=', x_l.shape)
                 h = self.propagate(tmp, x=x_l, size=size)
-                print('h.shape=',h.shape)
-                print('weight[i].shape=',weight[i].shape)
+                # print('h.shape=',h.shape)
+                # print('weight[i].shape=',weight[i].shape)
                 out = out + (h @ weight[i])
         else:
             ptr = [0]
@@ -176,9 +176,9 @@ class RGCNConv(MessagePassing):
                 ptr.append(ctr)
             h = torch.cat(hs)
             ptr = torch.tensor(ptr)
-            print('inputs.shape=', h.shape)    
-            print('ptr=',ptr)
-            print('weight.shape=', weight.shape)
+            # print('inputs.shape=', h.shape)    
+            # print('ptr=',ptr)
+            # print('weight.shape=', weight.shape)
             out = torch.ops.pyg.segment_matmul(h, ptr, weight)
 
         if self.bias is not None:
