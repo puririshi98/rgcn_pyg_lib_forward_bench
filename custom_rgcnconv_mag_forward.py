@@ -761,7 +761,7 @@ def fuse_batch(batch):
 
     e_idx_dict = batch.collect('edge_index')
     etypes_list = []
-    print({e_type:val.shape for etype,val in e_idx_dict.items()})
+    print({etype:val.shape for etype,val in e_idx_dict.items()})
     for i, e_type in enumerate(e_idx_dict.keys()):
         if torch.numel(e_idx_dict[e_type]) != 0:
             src_type, dst_type = e_type[0], e_type[-1]
@@ -770,7 +770,7 @@ def fuse_batch(batch):
             etypes_list.append(torch.ones_like(e_idx_dict[e_type]) * i)
     print(len(etypes_list))
     print([i.shape for i in etypes_list])
-    print({e_type:val.shape for etype,val in e_idx_dict.items()})
+    print({etype:val.shape for etype,val in e_idx_dict.items()})
     edge_types = torch.cat(etypes_list)
     return x, torch.cat(list(e_idx_dict.values()), dim=1), edge_types
 for i, batch in enumerate(data_object.train_dataloader):
