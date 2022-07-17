@@ -85,7 +85,8 @@ class RGCNConv(MessagePassing):
         aggr: str = 'mean',
         root_weight: bool = True,
         bias: bool = True,
-        lib=False
+        lib: bool = False,
+        **kwargs,
     ):
         kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
