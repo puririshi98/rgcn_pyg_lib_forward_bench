@@ -169,14 +169,9 @@ class RGCNConv(MessagePassing):
             ptr = []
             ctr = 0
             uniques, cts = torch.unique(edge_type, return_counts=True)
-            print(uniques)
-            print(cts)
-            for ct in cts:
-                print(ct)
+            for ct in cts.tolist():
                 ptr.append(ctr)
                 ctr += ct
-                print(ctr)
-                print(ptr)
             ptr.append(ctr)
             ptr = torch.tensor(ptr)    
             print('ptr=',ptr)
