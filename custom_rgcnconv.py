@@ -7,7 +7,7 @@ from torch.nn import Parameter
 from torch.nn import Parameter as Param
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
-
+import time
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 
@@ -107,6 +107,7 @@ class RGCNConv(MessagePassing):
             self.bias = Param(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
+        self.sumtime = 0
 
     def forward(self, x, edge_index, edge_type):
         r"""
@@ -124,7 +125,7 @@ class RGCNConv(MessagePassing):
                 :class:`torch_sparse.tensor.SparseTensor`.
                 (default: :obj:`None`)
         """
-
+        since=time.time()
         # Convert input features to a pair of node features or node indices.
         x_l: OptTensor = None
         if isinstance(x, tuple):
@@ -183,7 +184,6 @@ class RGCNConv(MessagePassing):
 
         if self.bias is not None:
             out += self.bias
-
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
