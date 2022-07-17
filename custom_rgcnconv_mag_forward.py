@@ -696,7 +696,7 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv1(x, edge_index, edge_type, ptr))
         x = self.conv2(x, edge_index, edge_type, ptr)
         return F.log_softmax(x, dim=1)
-model = Net(bool(sys.arv[2])).to(sys.argv[1])
+model = Net(bool(sys.argv[2])).to(sys.argv[1])
 import time
 sumtime = 0
 
