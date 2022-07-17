@@ -11,9 +11,6 @@ from torch_sparse import SparseTensor, masked_select_nnz, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 
-from ..inits import glorot, zeros
-
-
 @torch.jit._overload
 def masked_edge_index(edge_index, edge_mask):
     # type: (Tensor, Tensor) -> Tensor
@@ -85,8 +82,6 @@ class RGCNConv(MessagePassing):
         in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
         num_relations: int,
-        num_bases: Optional[int] = None,
-        num_blocks: Optional[int] = None,
         aggr: str = 'mean',
         root_weight: bool = True,
         bias: bool = True,
@@ -95,15 +90,9 @@ class RGCNConv(MessagePassing):
         kwargs.setdefault('aggr', aggr)
         super().__init__(node_dim=0, **kwargs)
 
-        if num_bases is not None and num_blocks is not None:
-            raise ValueError('Can not apply both basis-decomposition and '
-                             'block-diagonal-decomposition at the same time.')
-
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.num_relations = num_relations
-        self.num_bases = num_bases
-        self.num_blocks = num_blocks
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -117,14 +106,6 @@ class RGCNConv(MessagePassing):
             self.bias = Param(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        glorot(self.weight)
-        glorot(self.comp)
-        glorot(self.root)
-        zeros(self.bias)
 
     def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
                 edge_index: Adj, edge_type: OptTensor = None):

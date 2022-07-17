@@ -367,192 +367,6 @@ def load_graph(root_path, metadata, use_reverse_edges_features=False):
     g.node_types = node_types
     return g
 
-
-class DataObject:
-    def __init__(
-        self,
-        train_dataloader=None,
-        valid_dataloader=None,
-        test_dataloader=None,
-        data_path: Optional[str] = None,
-        target_extraction_policy=None,
-        use_reverse_edges_features=False,
-    ):
-        self.data_path = data_path
-        self.use_reverse_edges_features = use_reverse_edges_features
-        self.construct_cache = {}
-        self.metadata = load_metadata(data_path)
-        # import pdb; pdb.set_trace()
-        self.load_data(data_path)
-        self.construct_cache["train_dataloader"] = train_dataloader
-        self.construct_cache["valid_dataloader"] = valid_dataloader
-        self.construct_cache["test_dataloader"] = test_dataloader
-        self.build_train_dataloader_pre_dist(train_dataloader)
-        self.build_valid_dataloader_pre_dist(valid_dataloader)
-        self.build_test_dataloader_pre_dist(test_dataloader)
-        self.target_extraction_policy = self.get_default_target_extraction_policy()
-
-    def get_default_target_extraction_policy(self):
-        raise NotImplementedError(
-            f"{self} needs to implement `get_default_target_extraction_policy` "
-            f"or you should pass `target_extraction_policy` explicitly"
-        )
-
-    def extract_output_target(self, batch, output, device):
-        return self.target_extraction_policy(self, batch, output, device)
-
-    def load_data(self, data_path):
-        self.construct_cache["graph"] = load_graph(
-            data_path,
-            self.metadata,
-            use_reverse_edges_features=self.use_reverse_edges_features,
-        )
-
-    def init_post_dist(self, device="cuda", use_ddp=False):
-        self.device = device
-        self.use_ddp = use_ddp
-        self.build_train_dataloader_post_dist(device, use_ddp)
-        self.build_valid_dataloader_post_dist(device, use_ddp)
-        self.build_test_dataloader_post_dist(device, use_ddp)
-
-    # For task specific dataloading, users should implement an inheritor class of DataObject
-    def build_train_dataloader_pre_dist(self, dataloader_spec):
-        self.train_dataloader = (dataloader_spec, self.construct_cache["graph"])
-
-    def build_valid_dataloader_pre_dist(self, dataloader_spec):
-        self.valid_dataloader = (dataloader_spec, self.construct_cache["graph"])
-
-    def build_test_dataloader_pre_dist(self, dataloader_spec):
-        self.test_dataloader = (dataloader_spec, self.construct_cache["graph"])
-
-    def build_train_dataloader_post_dist(self, device, use_ddp):
-        return
-
-    def build_valid_dataloader_post_dist(self, device, use_ddp):
-        return
-
-    def build_test_dataloader_post_dist(self, device, use_ddp):
-        return
-
-    @property
-    def train(self):
-        return self.train_dataloader
-
-    @property
-    def valid(self):
-        return self.valid_dataloader
-
-    @property
-    def test(self):
-        return self.test_dataloader
-
-    def get_labels(self, batch):
-        raise NotImplementedError
-
-    @property
-    def get_metadata(self):
-        return self.metadata
-
-    @property
-    def graph(self):
-        return self.construct_cache.get("graph")
-
-
-class DefaultNodeTargetExtractionPolicy:
-    def __call__(self, data_object, batch, output, device):
-        output, target = get_logit_labels_types_block(
-            batch, output, data_object.node_label_map, device
-        )
-        return output, target
-
-
-class NodeDataObject(DataObject):
-    def __init__(
-        self,
-        train_dataloader=None,
-        valid_dataloader=None,
-        test_dataloader=None,
-        data_path: Optional["str"] = None,
-        target_extraction_policy=None,
-    ):
-        super().__init__(
-            train_dataloader,
-            valid_dataloader,
-            test_dataloader,
-            data_path,
-            target_extraction_policy,
-        )
-        self.node_label_map = defaultdict(list)
-        for node in self.metadata[MetadataKeys.NODES][MetadataKeys.NODE_TYPES]:
-            node_features = node[MetadataKeys.FEAT]
-            for feature in node_features:
-                if feature.get(MetadataKeys.LABEL, False):
-                    y = self.construct_cache["graph"][node[MetadataKeys.NAME]].y
-                    # TODO: THIS ASSUMES THAT ONLY A SINGLE NODE TYPE HAS A LABEL
-                    # (If there are multiple chooses the last by default)
-                    self.label_sizes = y.max().item() + 1
-                    self.label_tag = [
-                        node[MetadataKeys.NAME],
-                        feature[MetadataKeys.NAME],
-                    ]
-
-                    # Tracks all types
-                    self.node_label_map[node[MetadataKeys.NAME]].append(
-                        (feature[MetadataKeys.NAME], self.label_sizes)
-                    )
-
-    def get_labels(self, batch):
-        return extract_block_one_hot_labels(
-            batch, self.label_tag[1], self.label_sizes, self.label_tag[0]
-        )
-
-    def get_default_target_extraction_policy(self):
-        return DefaultNodeTargetExtractionPolicy()
-
-    def build_train_dataloader_pre_dist(self, dataloader_spec):
-        train_ids = get_split_nids(
-            self.construct_cache["graph"], self.metadata, split=0
-        )
-        self.construct_cache["train_ids"] = train_ids
-
-    def build_train_dataloader_post_dist(self, device, use_ddp):
-        train_ids = self.construct_cache["train_ids"]
-        self.train_dataloader = make_pyg_loader(
-            self.construct_cache["graph"],
-            train_ids,
-            self.metadata,
-            device,
-        )
-
-    def build_valid_dataloader_pre_dist(self, dataloader_spec):
-        valid_ids = get_split_nids(
-            self.construct_cache["graph"], self.metadata, split=1
-        )
-        self.construct_cache["valid_ids"] = valid_ids
-
-    def build_valid_dataloader_post_dist(self, device, use_ddp):
-        # Build block sampler
-        valid_ids = self.construct_cache["valid_ids"]
-        self.valid_dataloader = make_pyg_loader(
-            self.construct_cache["graph"],
-            valid_ids,
-            self.metadata,
-            device,
-        )
-
-    def build_test_dataloader_pre_dist(self, dataloader_spec):
-        test_ids = get_split_nids(self.construct_cache["graph"], self.metadata, split=2)
-        self.construct_cache["test_ids"] = test_ids
-        # Build block sampler
-
-    def build_test_dataloader_post_dist(self, device, use_ddp):
-        test_ids = self.construct_cache["test_ids"]
-        self.test_dataloader = make_pyg_loader(
-            self.construct_cache["graph"],
-            test_ids,
-            self.metadata,
-            device,
-        )
 class OGBN_MAG:
     """
     The OGBN_MAG class includes the transformation
@@ -830,38 +644,120 @@ class OGBN_MAG:
 
         with open(os.path.join(self.dest_path, "metadata.json"), "w") as f:
             json.dump(self.metadata, f)
+class DataObject:
+    def __init__(
+        self,
+        train_dataloader=None,
+        valid_dataloader=None,
+        test_dataloader=None,
+        data_path: Optional[str] = None,
+        target_extraction_policy=None,
+        use_reverse_edges_features=False,
+    ):
+        self.data_path = data_path
+        self.use_reverse_edges_features = use_reverse_edges_features
+        self.construct_cache = {}
+        self.metadata = load_metadata(data_path)
+        # import pdb; pdb.set_trace()
+        self.load_data(data_path)
+        self.construct_cache["train_dataloader"] = train_dataloader
+        self.construct_cache["valid_dataloader"] = valid_dataloader
+        self.construct_cache["test_dataloader"] = test_dataloader
+        self.build_train_dataloader_pre_dist(train_dataloader)
+
+    def load_data(self, data_path):
+        self.construct_cache["graph"] = load_graph(
+            data_path,
+            self.metadata,
+            use_reverse_edges_features=self.use_reverse_edges_features,
+        )
+
+    def init_post_dist(self, device="cuda", use_ddp=False):
+        self.device = device
+        self.use_ddp = use_ddp
+        self.build_train_dataloader_post_dist(device, use_ddp)
+
+    # For task specific dataloading, users should implement an inheritor class of DataObject
+    def build_train_dataloader_pre_dist(self, dataloader_spec):
+        self.train_dataloader = (dataloader_spec, self.construct_cache["graph"])
+
+    def build_train_dataloader_post_dist(self, device, use_ddp):
+        return
+
+
+    @property
+    def train(self):
+        return self.train_dataloader
+
+    def get_labels(self, batch):
+        raise NotImplementedError
+
+    @property
+    def get_metadata(self):
+        return self.metadata
+
+    @property
+    def graph(self):
+        return self.construct_cache.get("graph")
+
+
+class NodeDataObject(DataObject):
+    def build_train_dataloader_pre_dist(self, dataloader_spec):
+        train_ids = get_split_nids(
+            self.construct_cache["graph"], self.metadata, split=0
+        )
+        self.construct_cache["train_ids"] = train_ids
+
+    def build_train_dataloader_post_dist(self, device):
+        train_ids = self.construct_cache["train_ids"]
+        self.train_dataloader = make_pyg_loader(
+            self.construct_cache["graph"],
+            train_ids,
+            self.metadata,
+            device,
+        )
 DATA_DIR = "/workspace/data/"
 
-
 from custom_rgcnconv import RGCNConv
-def mag_rgcn_pyg_lib():
-    torch.cuda.empty_cache()
-    source_path = os.path.join(DATA_DIR, "ogbn/mag/")
-    destination_path = os.path.join(DATA_DIR, "ogbn/mag/GP_Transformed/")
 
-    if os.path.exists(destination_path):
-        shutil.rmtree(destination_path)
+torch.cuda.empty_cache()
+source_path = os.path.join(DATA_DIR, "ogbn/mag/")
+destination_path = os.path.join(DATA_DIR, "ogbn/mag/GP_Transformed/")
 
-    prep = OGBN_MAG(source_path, destination_path)
-    prep.transform()
-
-    data_object = NodeDataObject(
-        data_path=destination_path,
-    )
-    metadata = data_object.metadata
-    model = pass
-    import time
-    sumtime = 0
-    for i, batch in enumerate(data_object.train_dataloader):
-        since=time.time()
-        out = model(batch)
-        sumtime += time.time() - since
-        if i==49:
-            break
-    print('Average forward pass time:', sumtime/50.0)
+if os.path.exists(destination_path):
     shutil.rmtree(destination_path)
-    torch.cuda.empty_cache()
 
+prep = OGBN_MAG(source_path, destination_path)
+prep.transform()
 
-if __name__ == "__main__":
-    mag_rgcn_pyg_lib()
+data_object = NodeDataObject(
+    data_path=destination_path,
+)
+data_object.build_train_dataloader_post_dist('cpu')
+data = data_object.graph
+n_classes = torch.unique(data['paper'].y)
+class Net(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = RGCNConv(128, 64, 4)
+        self.conv2 = RGCNConv(64, n_classes, 4)
+
+    def forward(self, x, edge_index, edge_type):
+        x = F.relu(self.conv1(x, edge_index, edge_type))
+        x = self.conv2(x, edge_index, edge_type)
+        return F.log_softmax(x, dim=1)
+model = Net()
+import time
+sumtime = 0
+for i, batch in enumerate(data_object.train_dataloader):
+    x = batch.collect('x')
+    edge_index = torch.cat([i for i in dict(batch.collect('edge_index')).values()], dim=1)
+    edge_type = torch.cat([i * torch.ones_like(e_idx) for i, e_idx in enumerate(dict(batch.collect('edge_index')).values())], dim=1)
+    since=time.time()
+    out = model(x, edge_index, edge_type)
+    sumtime += time.time() - since
+    if i==49:
+        break
+print('Average forward pass time:', sumtime/50.0)
+shutil.rmtree(destination_path)
+torch.cuda.empty_cache()
