@@ -749,7 +749,7 @@ model = Net()
 import time
 sumtime = 0
 
-def fuse_batch(batch)
+def fuse_batch(batch):
     x_dict = batch.collect('x')
     x = torch.cat(list(x_dict.values()), dim=0)
     num_node_dict = batch.collect('num_nodes')
