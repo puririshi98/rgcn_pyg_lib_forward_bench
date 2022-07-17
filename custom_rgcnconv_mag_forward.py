@@ -195,7 +195,6 @@ def load_graph(root_path, metadata, use_reverse_edges_features=False):
             g[relation].edge_index = torch.cat((dst, src), axis=0)
             g[Meta.NUM_EDGES_DICT][relation] = g[relation].edge_index.size()[-1]
     node_types = []
-    filled_node_types = []
     # PyG Hetero Loaders don't like additional information in the node stores
     # Make seperate dicts to hold info
     g[Meta.NODE_SPLIT_AT_DICT] = {}
@@ -204,7 +203,6 @@ def load_graph(root_path, metadata, use_reverse_edges_features=False):
     for node in metadata[Meta.NODES][Meta.NODE_TYPES]:
         node_types.append(node[Meta.NAME])
         if node.get(Meta.FILES):
-            filled_node_types.append(node)
             feats = read_pandas_feats(root_path, node)
             list_of_submtrx_to_cat = []
             # submtrx_shapes = []
@@ -248,7 +246,12 @@ def load_graph(root_path, metadata, use_reverse_edges_features=False):
             # g[node[Meta.NAME]].submtrx_shapes = dict(submtrx_shapes)
             g[node[Meta.NAME]].num_nodes = g[node[Meta.NAME]].x.size()[0]
             # Store given split or choose at random
-            g = make_split(g[node[Meta.NAME]].num_nodes, g, node[Meta.NAME])
+            if metadata[Meta.NODES].get(Meta.SPLIT_NAME):
+                g[Meta.NODE_SPLIT_AT_DICT][node[Meta.NAME]] = torch.Tensor(
+                    feats[metadata[Meta.NODES].get(Meta.SPLIT_NAME)]
+                ).to("cpu")
+            else:
+                g = make_split(g[node[Meta.NAME]].num_nodes, g, node[Meta.NAME])
         else:
             # Need to atleast store num nodes. DGL does this automatically
             # PyG does not
@@ -258,7 +261,7 @@ def load_graph(root_path, metadata, use_reverse_edges_features=False):
     if Meta.NUM_NODES_DICT in metadata.keys():
         g.num_nodes = sum(list(metadata[Meta.NUM_NODES_DICT].values()))
     else:
-        g.num_nodes = sum([g[node[Meta.NAME]].num_nodes for node in filled_node_types])
+        g.num_nodes = sum([g[node_name].num_nodes for node_name in node_types])
 
     # PyG Hetero Loaders don't like additional information in the edge stores
     # Make seperate dicts to hold info
@@ -322,10 +325,19 @@ def load_graph(root_path, metadata, use_reverse_edges_features=False):
                         relation
                     ].clone()
             # g[Meta.EDGE_SUBMATRIX_SHAPES_DICT][relation] = dict(submtrx_shapes)
-            g = make_split(g[Meta.NUM_EDGES_DICT][relation], g, relation)
+            if metadata[Meta.EDGES].get(Meta.SPLIT_NAME):
+                if metadata[Meta.EDGES][Meta.SPLIT_NAME] in feats:
+                    g[Meta.EDGE_SPLIT_AT_DICT][relation] = torch.Tensor(
+                        feats[metadata[Meta.EDGES].get(Meta.SPLIT_NAME)]
+                    ).to("cpu")
+                else:
+                    g[Meta.EDGE_SPLIT_AT_DICT][relation] = None
+            else:
+                g = make_split(g[Meta.NUM_EDGES_DICT][relation], g, relation)
     g.edge_types = relation_types
     g.node_types = node_types
     return g
+
 
 class OGBN_MAG:
     """
