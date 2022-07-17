@@ -715,13 +715,13 @@ def fuse_batch(batch):
     ptr = [0]
     ctr = 0
     for i, e_type in enumerate(e_idx_dict.keys()):
+        src_type, dst_type = e_type[0], e_type[-1]
         if torch.numel(e_idx_dict[e_type]) != 0:
-            src_type, dst_type = e_type[0], e_type[-1]
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-            ctr += increment_dict[src_type]
-            ptr.append(ctr)
+        ctr += increment_dict[src_type]
+        ptr.append(ctr)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
     return x, eidx, edge_types, ptr
