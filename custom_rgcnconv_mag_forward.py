@@ -720,11 +720,11 @@ def fuse_batch(batch):
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
-    return x, eidx, edge_types
+    return x, eidx, edge_types, increment_dict
 for i, batch in enumerate(data_object.train_dataloader):
-    x, edge_index, edge_type = fuse_batch(batch)
+    x, edge_index, edge_type, increment_dict = fuse_batch(batch)
     since=time.time()
-    out = model(x, edge_index, edge_type)
+    out = model(x, edge_index, edge_type, increment_dict)
     sumtime += time.time() - since
     if i==49:
         break

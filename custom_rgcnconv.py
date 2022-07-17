@@ -108,7 +108,7 @@ class RGCNConv(MessagePassing):
             self.register_parameter('bias', None)
 
     def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
-                edge_index: Adj, edge_type: OptTensor = None):
+                edge_index: Adj, edge_type: OptTensor = None, ptr = None):
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
@@ -165,15 +165,7 @@ class RGCNConv(MessagePassing):
                 out = out + (h @ weight[i])
         else:
             h = self.propagate(edge_index, x=x_l, size=size)
-            print('inputs.shape=', h.shape)
-            ptr = []
-            ctr = 0
-            uniques, cts = torch.unique(edge_type, return_counts=True)
-            for ct in cts.tolist():
-                ptr.append(ctr)
-                ctr += ct
-            ptr.append(ctr)
-            ptr = torch.tensor(ptr)    
+            print('inputs.shape=', h.shape)    
             print('ptr=',ptr)
             print('weight.shape=', weight.shape)
             out = torch.ops.pyg.segment_matmul(h, ptr, weight)
