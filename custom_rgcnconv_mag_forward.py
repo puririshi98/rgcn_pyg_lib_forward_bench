@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as opt
 import torch_geometric
 import torch_geometric.transforms as T
@@ -724,11 +725,9 @@ torch.cuda.empty_cache()
 source_path = os.path.join(DATA_DIR, "ogbn/mag/")
 destination_path = os.path.join(DATA_DIR, "ogbn/mag/GP_Transformed/")
 
-if os.path.exists(destination_path):
-    shutil.rmtree(destination_path)
-
-prep = OGBN_MAG(source_path, destination_path)
-prep.transform()
+if not os.path.exists(destination_path):
+    prep = OGBN_MAG(source_path, destination_path)
+    prep.transform()
 
 data_object = NodeDataObject(
     data_path=destination_path,
@@ -759,5 +758,4 @@ for i, batch in enumerate(data_object.train_dataloader):
     if i==49:
         break
 print('Average forward pass time:', sumtime/50.0)
-shutil.rmtree(destination_path)
 torch.cuda.empty_cache()
