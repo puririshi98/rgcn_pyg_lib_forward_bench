@@ -172,8 +172,11 @@ class RGCNConv(MessagePassing):
             print(uniques)
             print(cts)
             for ct in cts:
+                print(ct)
                 ptr.append(ctr)
                 ctr += ct
+                print(ctr)
+                print(ptr)
             ptr.append(ctr)
             ptr = torch.tensor(ptr)    
             print('ptr=',ptr)
