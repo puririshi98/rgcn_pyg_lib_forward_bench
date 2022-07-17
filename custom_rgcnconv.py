@@ -164,9 +164,9 @@ class RGCNConv(MessagePassing):
                 print('weight[i].shape=',weight[i].shape)
                 out = out + (h @ weight[i])
         else:
-            hs = edge_index
+            hs = self.propagate(edge_index, x=x_l, size=size)
             print('inputs.shape=', hs.shape)
-            ptr = edge_type
+            ptr = # get ptr from edge_type
             print('ptr.shape=',ptr.shape)
             print('weight.shape=', weight.shape)
             out = torch.ops.pyg.segment_matmul(hs, ptr, weight)
