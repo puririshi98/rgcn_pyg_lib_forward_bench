@@ -692,9 +692,9 @@ class Net(torch.nn.Module):
         self.conv1 = RGCNConv(128, 64, 8, lib=lib)
         self.conv2 = RGCNConv(64, n_classes, 8, lib=lib)
 
-    def forward(self, x, edge_index, edge_type, ptr):
-        x = F.relu(self.conv1(x, edge_index, edge_type, ptr))
-        x = self.conv2(x, edge_index, edge_type, ptr)
+    def forward(self, x, edge_index, edge_type):
+        x = F.relu(self.conv1(x, edge_index, edge_type))
+        x = self.conv2(x, edge_index, edge_type)
         return F.log_softmax(x, dim=1)
 model = Net(bool(int(sys.argv[2]))).to(sys.argv[1])
 import time
@@ -722,7 +722,7 @@ def fuse_batch(batch):
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
     return x, eidx, edge_types
 for i, batch in enumerate(data_object.train_dataloader):
-    x, edge_index, edge_type, ptr = fuse_batch(batch)
+    x, edge_index, edge_type = fuse_batch(batch)
     since=time.time()
     out = model(x, edge_index, edge_type)
     sumtime += time.time() - since
