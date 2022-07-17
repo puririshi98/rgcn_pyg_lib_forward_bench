@@ -5,6 +5,7 @@ import pathlib
 import re
 import shutil
 import time
+import sys
 from collections import defaultdict
 from typing import Optional
 import numpy as np
@@ -681,7 +682,7 @@ if not os.path.exists(destination_path):
 data_object = NodeDataObject(
     data_path=destination_path,
 )
-data_object.build_train_dataloader_post_dist('cuda:0')
+data_object.build_train_dataloader_post_dist(sys.argv[1])
 data = data_object.graph
 n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
@@ -694,7 +695,7 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv1(x, edge_index, edge_type))
         x = self.conv2(x, edge_index, edge_type)
         return F.log_softmax(x, dim=1)
-model = Net().to('cuda:0')
+model = Net().to(sys.argv[1])
 import time
 sumtime = 0
 
