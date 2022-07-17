@@ -168,8 +168,8 @@ class RGCNConv(MessagePassing):
             print('inputs.shape=', h.shape)
             ptr = []
             ctr = 0
-            _, cts = torch.unique(edge_type, return_counts=True)
-            print(torch.unique(edge_type))
+            uniques, cts = torch.unique(edge_type, return_counts=True)
+            print(uniques)
             print(cts)
             for ct in cts:
                 ptr.append(ctr)
