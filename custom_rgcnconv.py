@@ -168,7 +168,7 @@ class RGCNConv(MessagePassing):
             print('inputs.shape=', h.shape)
             ptr = []
             ctr = 0
-            for i in self.num_relations:
+            for i in range(self.num_relations):
                 ptr.append(ctr)
                 ctr += torch.sum(edge_type == i)
             ptr.append(ctr)
