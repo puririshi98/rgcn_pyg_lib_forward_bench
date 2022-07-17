@@ -750,7 +750,6 @@ import time
 sumtime = 0
 
 def fuse_batch(batch):
-    print(batch)
     x_dict = batch.collect('x')
     x = torch.cat(list(x_dict.values()), dim=0)
     num_node_dict = batch.collect('num_nodes')
@@ -761,8 +760,9 @@ def fuse_batch(batch):
         ctr += num_node_dict[node_type]
 
     e_idx_dict = batch.collect('edge_index')
-    print(e_idx_dict)
     for e_type in e_idx_dict.keys():
+        if torch.numel(e_idx_dict[e_type]) == 0:
+            continue
         src_type, dst_type = e_type[0], e_type[-1]
         new_idxs = e_idx_dict[e_type][0]+ increment_dict[src_type]
         e_idx_dict[e_type] = new_idxs[1] + increment_dict[dst_type]
