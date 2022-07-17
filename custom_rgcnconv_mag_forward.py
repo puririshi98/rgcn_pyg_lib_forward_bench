@@ -724,7 +724,7 @@ def fuse_batch(batch):
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type, increment_dict = fuse_batch(batch)
     since=time.time()
-    out = model(x, edge_index, edge_type, increment_dict)
+    out = model(x, edge_index, edge_type, ptr=increment_dict)
     sumtime += time.time() - since
     if i==49:
         break
