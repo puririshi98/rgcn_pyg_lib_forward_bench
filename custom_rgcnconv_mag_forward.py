@@ -692,9 +692,9 @@ class Net(torch.nn.Module):
         self.conv1 = RGCNConv(128, 64, 8)
         self.conv2 = RGCNConv(64, n_classes, 8)
 
-    def forward(self, x, edge_index, edge_type):
-        x = F.relu(self.conv1(x, edge_index, edge_type))
-        x = self.conv2(x, edge_index, edge_type)
+    def forward(self, x, edge_index, edge_type, ptr):
+        x = F.relu(self.conv1(x, edge_index, edge_type, ptr))
+        x = self.conv2(x, edge_index, edge_type, ptr)
         return F.log_softmax(x, dim=1)
 model = Net().to(sys.argv[1])
 import time
