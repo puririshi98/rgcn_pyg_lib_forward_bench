@@ -158,6 +158,7 @@ class RGCNConv(MessagePassing):
                 print('edge_index.shape=',edge_index.shape)
                 print('edge_type.shape=',edge_type.shape)
                 print('tmp.shape=', tmp.shape)
+                print('x_l.shape=', x_l.shape)
                 h = self.propagate(tmp, x=x_l, size=size)
                 print('h.shape=',h.shape)
                 print('weight[i].shape=',weight[i].shape)
