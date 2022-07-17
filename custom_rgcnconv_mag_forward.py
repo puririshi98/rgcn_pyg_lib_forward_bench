@@ -706,25 +706,29 @@ def fuse_batch(batch):
     num_node_dict = batch.collect('num_nodes')
     increment_dict = {}
     ctr = 0
+    
     for node_type in num_node_dict:
         increment_dict[node_type] = ctr
         ctr += num_node_dict[node_type]
-
     e_idx_dict = batch.collect('edge_index')
     etypes_list = []
+    ptr = [0]
+    ctr = 0
     for i, e_type in enumerate(e_idx_dict.keys()):
         if torch.numel(e_idx_dict[e_type]) != 0:
             src_type, dst_type = e_type[0], e_type[-1]
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
+            ctr += increment_dict[src_type]
+            ptr.append(ctr)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
-    return x, eidx, edge_types, increment_dict
+    return x, eidx, edge_types, ptr
 for i, batch in enumerate(data_object.train_dataloader):
-    x, edge_index, edge_type, increment_dict = fuse_batch(batch)
+    x, edge_index, edge_type, ptr = fuse_batch(batch)
     since=time.time()
-    out = model(x, edge_index, edge_type, ptr=increment_dict)
+    out = model(x, edge_index, edge_type, ptr)
     sumtime += time.time() - since
     if i==49:
         break
