@@ -174,7 +174,7 @@ class RGCNConv(MessagePassing):
                 ctr += ct
             ptr.append(ctr)
             ptr = torch.tensor(ptr)    
-            print('ptr.shape=',ptr.shape)
+            print('ptr=',ptr)
             print('weight.shape=', weight.shape)
             out = torch.ops.pyg.segment_matmul(h, ptr, weight)
 

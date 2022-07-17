@@ -80,7 +80,7 @@ def load_metadata(root_path):
         return {}
 
 
-def make_pyg_loader(graph, train_ids, metadata, device):
+def make_pyg_loader(graph, metadata, device):
     src_node_types = set(
         [
             i[MetadataKeys.SRC_TYPE]
@@ -114,56 +114,13 @@ def make_pyg_loader(graph, train_ids, metadata, device):
         batch_size=1024,
         shuffle=True,
         drop_last=False,
-        input_nodes=(graph.labeled_node_type, train_ids[graph.labeled_node_type]),
         num_workers=num_work,
         replace=True,
         transform=T.Compose(T_list),
     )
 
 
-def get_split_nids(graph, metadata, split):
-    split_values = {}
-    for node in metadata[Meta.NODES][Meta.NODE_TYPES]:
-        compare = None
-        if node[Meta.NAME] in graph[Meta.NODE_SPLIT_AT_DICT].keys():
-            compare = graph[Meta.NODE_SPLIT_AT_DICT][node[Meta.NAME]]
-        if compare is not None:
-            split_values[node[Meta.NAME]] = (
-                (compare == split).nonzero()[:, 0].type(torch.int64)
-            )
-    return split_values
 
-
-def extract_block_one_hot_labels(
-    batch, label_name, label_size, node_type, device, logits
-):
-    batch_size = batch[batch.labeled_node_type].batch_size
-    return (
-        logits[:batch_size],
-        torch.nn.functional.one_hot(
-            batch[node_type].y[:batch_size], num_classes=label_size
-        )
-        .float()
-        .to(device),
-    )
-
-
-def get_logit_labels_types_block(batch, logits, node_label_map, device):
-    all_logits = []
-    all_labels = []
-    for node_type, logits in logits.items():
-        label_names = node_label_map[node_type]
-        for label_name, label_size in label_names:
-            # - XXX: assumes labels are present for all nodes in batch
-            #        will require a mask for filtering
-            logits, labels = extract_block_one_hot_labels(
-                batch, label_name, label_size, node_type, device, logits
-            )
-            all_logits.append(logits)
-            all_labels.append(labels)
-    labels = torch.cat(all_labels, dim=0)
-    logits = torch.cat(all_logits, dim=0)
-    return logits, labels
 
 
 def read_pandas_feats(root_path, dicty):
@@ -703,17 +660,9 @@ class DataObject:
 
 
 class NodeDataObject(DataObject):
-    def build_train_dataloader_pre_dist(self, dataloader_spec):
-        train_ids = get_split_nids(
-            self.construct_cache["graph"], self.metadata, split=0
-        )
-        self.construct_cache["train_ids"] = train_ids
-
     def build_train_dataloader_post_dist(self, device):
-        train_ids = self.construct_cache["train_ids"]
         self.train_dataloader = make_pyg_loader(
             self.construct_cache["graph"],
-            train_ids,
             self.metadata,
             device,
         )
@@ -732,7 +681,7 @@ if not os.path.exists(destination_path):
 data_object = NodeDataObject(
     data_path=destination_path,
 )
-data_object.build_train_dataloader_post_dist('cpu')
+data_object.build_train_dataloader_post_dist('cuda:0')
 data = data_object.graph
 n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
@@ -745,7 +694,7 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv1(x, edge_index, edge_type))
         x = self.conv2(x, edge_index, edge_type)
         return F.log_softmax(x, dim=1)
-model = Net()
+model = Net().to('cuda:0')
 import time
 sumtime = 0
 
