@@ -696,7 +696,7 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv1(x, edge_index, edge_type, ptr))
         x = self.conv2(x, edge_index, edge_type, ptr)
         return F.log_softmax(x, dim=1)
-model = Net(bool(sys.argv[2])).to(sys.argv[1])
+model = Net(False).to(sys.argv[1])
 import time
 sumtime = 0
 
@@ -724,7 +724,7 @@ def fuse_batch(batch):
         ptr.append(ctr)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
-    return x, eidx, edge_types, ptr
+    return x, eidx, edge_types, torch.tensor(ptr)
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type, ptr = fuse_batch(batch)
     since=time.time()
