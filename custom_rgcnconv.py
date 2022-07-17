@@ -157,6 +157,7 @@ class RGCNConv(MessagePassing):
                 tmp = masked_edge_index(edge_index, edge_type == i)
                 print('edge_index.shape=',edge_index.shape)
                 print('edge_type.shape=',edge_type.shape)
+                print('tmp.shape=', tmp.shape)
                 h = self.propagate(tmp, x=x_l, size=size)
                 print('h.shape=',h.shape)
                 print('weight[i].shape=',weight[i].shape)
