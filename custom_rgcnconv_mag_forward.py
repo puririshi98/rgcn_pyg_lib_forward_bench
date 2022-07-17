@@ -762,17 +762,12 @@ def fuse_batch(batch):
     e_idx_dict = batch.collect('edge_index')
     etypes_list = []
     for i, e_type in enumerate(e_idx_dict.keys()):
-        print('etype',e_type)
-        print('numel', torch.numel(e_idx_dict[e_type]))
         if torch.numel(e_idx_dict[e_type]) != 0:
             src_type, dst_type = e_type[0], e_type[-1]
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][0, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones_like(e_idx_dict[e_type]) * i)
-            print("after change numel", torch.numel(e_idx_dict[e_type]))
-    print(len(etypes_list))
-    print([i.shape for i in etypes_list])
-    edge_types = torch.cat(etypes_list)
+    edge_types = torch.cat(etypes_list, dim=1)
     return x, torch.cat(list(e_idx_dict.values()), dim=1), edge_types
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type = fuse_batch(batch)
