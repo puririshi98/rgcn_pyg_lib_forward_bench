@@ -168,9 +168,10 @@ class RGCNConv(MessagePassing):
             print('inputs.shape=', h.shape)
             ptr = []
             ctr = 0
-            for i in range(self.num_relations):
+            _, cts = torch.unique(edge_type, return_counts=True)
+            for ct in cts:
                 ptr.append(ctr)
-                ctr += torch.sum(edge_type == i)
+                ctr += ct
             ptr.append(ctr)
             ptr = torch.tensor(ptr)    
             print('ptr.shape=',ptr.shape)
