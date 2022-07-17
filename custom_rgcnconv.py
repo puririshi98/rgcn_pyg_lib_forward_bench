@@ -85,6 +85,7 @@ class RGCNConv(MessagePassing):
         aggr: str = 'mean',
         root_weight: bool = True,
         bias: bool = True,
+        lib=False
         **kwargs,
     ):
         kwargs.setdefault('aggr', aggr)
@@ -101,7 +102,7 @@ class RGCNConv(MessagePassing):
         self.weight = Parameter(
             torch.Tensor(num_relations, in_channels[0], out_channels))
         self.register_parameter('comp', None)
-
+        self.lib = lib
         if bias:
             self.bias = Param(torch.Tensor(out_channels))
         else:
@@ -148,19 +149,19 @@ class RGCNConv(MessagePassing):
             pyg_lib_avail = True
         except:
             pyg_lib_avail = False
-        if not pyg_lib_avail:
+        if not self.lib:
             # propagate_type: (x: Tensor)
             out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
             for i in range(self.num_relations):
                 # print("Relation number:", i)
                 tmp = masked_edge_index(edge_index, edge_type == i)
-                # print('edge_index.shape=',edge_index.shape)
-                # print('edge_type.shape=',edge_type.shape)
-                # print('tmp.shape=', tmp.shape)
-                # print('x_l.shape=', x_l.shape)
+                print('edge_index.shape=',edge_index.shape)
+                print('edge_type.shape=',edge_type.shape)
+                print('tmp.shape=', tmp.shape)
+                print('x_l.shape=', x_l.shape)
                 h = self.propagate(tmp, x=x_l, size=size)
-                # print('h.shape=',h.shape)
-                # print('weight[i].shape=',weight[i].shape)
+                print('h.shape=',h.shape)
+                print('weight[i].shape=',weight[i].shape)
                 out = out + (h @ weight[i])
         else:
             h = self.propagate(edge_index, x=x_l, size=size)

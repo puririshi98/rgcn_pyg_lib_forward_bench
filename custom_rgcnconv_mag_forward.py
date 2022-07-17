@@ -688,15 +688,15 @@ data = data_object.graph
 n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
     def __init__(self):
-        super().__init__()
-        self.conv1 = RGCNConv(128, 64, 8)
-        self.conv2 = RGCNConv(64, n_classes, 8)
+        super().__init__(lib)
+        self.conv1 = RGCNConv(128, 64, 8, lib=lib)
+        self.conv2 = RGCNConv(64, n_classes, 8, lib=lib)
 
     def forward(self, x, edge_index, edge_type, ptr):
         x = F.relu(self.conv1(x, edge_index, edge_type, ptr))
         x = self.conv2(x, edge_index, edge_type, ptr)
         return F.log_softmax(x, dim=1)
-model = Net().to(sys.argv[1])
+model = Net(bool(sys.arv[2])).to(sys.argv[1])
 import time
 sumtime = 0
 
@@ -720,7 +720,7 @@ def fuse_batch(batch):
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-        ctr += increment_dict[src_type]
+        ctr += torch.numel(torch.unique(e_idx_dict[e_type][1, :]))
         ptr.append(ctr)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
