@@ -107,8 +107,7 @@ class RGCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
 
-    def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
-                edge_index: Adj, edge_type: OptTensor = None, ptr = None):
+    def forward(self, x, edge_index, edge_type, ptr = None):
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
