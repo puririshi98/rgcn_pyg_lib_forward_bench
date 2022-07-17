@@ -687,8 +687,8 @@ data_object.build_train_dataloader_post_dist(sys.argv[1])
 data = data_object.graph
 n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
-    def __init__(self):
-        super().__init__(lib)
+    def __init__(self, lib):
+        super().__init__()
         self.conv1 = RGCNConv(128, 64, 8, lib=lib)
         self.conv2 = RGCNConv(64, n_classes, 8, lib=lib)
 
