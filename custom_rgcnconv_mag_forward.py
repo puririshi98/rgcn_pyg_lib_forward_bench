@@ -735,7 +735,7 @@ data_object = NodeDataObject(
 )
 data_object.build_train_dataloader_post_dist('cpu')
 data = data_object.graph
-n_classes = torch.unique(data['paper'].y)
+n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
