@@ -168,10 +168,8 @@ class RGCNConv(MessagePassing):
             ptr = [0]
             hs = []
             ctr = 0
+            h = self.propagate(edge_index, x=x_l, size=size)
             for i in range(self.num_relations):
-                # print("Relation number:", i)
-                tmp = masked_edge_index(edge_index, edge_type == i)
-                h = self.propagate(tmp, x=x_l, size=size)
                 hs.append(h)
                 ctr += h.shape[0]
                 ptr.append(ctr)
