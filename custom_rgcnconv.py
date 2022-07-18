@@ -179,6 +179,8 @@ class RGCNConv(MessagePassing):
 
         if self.bias is not None:
             out += self.bias
+        assert not torch.isnan(out).any() and not torch.isinf(out).any()
+        print('out.shape=',out.shape)
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
