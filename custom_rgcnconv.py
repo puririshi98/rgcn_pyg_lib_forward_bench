@@ -99,8 +99,6 @@ class RGCNConv(MessagePassing):
 
     def reset_parameters(self):
         glorot(self.weight)
-        glorot(self.comp)
-        glorot(self.root)
 
     def forward(self, x, edge_index, edge_type):
         r"""
