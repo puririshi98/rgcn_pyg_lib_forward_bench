@@ -110,7 +110,6 @@ class RGCNConv(MessagePassing):
                 :class:`torch_sparse.tensor.SparseTensor`.
                 (default: :obj:`None`)
         """
-        since=time.time()
         # Convert input features to a pair of node features or node indices.
         x_l: OptTensor = None
         if isinstance(x, tuple):
