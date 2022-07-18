@@ -171,7 +171,7 @@ class RGCNConv(MessagePassing):
             print('inputs.shape=', h.shape)
             print('ptr=',ptr)
             print('weight.shape=', weight.shape)
-            out = torch.sum(torch.split(torch.ops.pyg.segment_matmul(h, ptr, weight), [h.shape[0]/self.num_relations]))
+            out = torch.sum(torch.split(torch.ops.pyg.segment_matmul(h, ptr, weight), [h.shape[0]/self.num_relations for i in range(self.num_relations)]))
 
         if self.bias is not None:
             out += self.bias
