@@ -14,7 +14,7 @@ from torch_geometric.typing import Adj, OptTensor
 def masked_edge_index(edge_index, edge_mask):
     return edge_index[:, edge_mask]
 
-def glorot(value: Any):
+def glorot(value):
     stdv = math.sqrt(6.0 / (value.size(-2) + value.size(-1)))
     value.data.uniform_(-stdv, stdv)
 
