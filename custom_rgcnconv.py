@@ -143,7 +143,6 @@ class RGCNConv(MessagePassing):
         out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
         if not self.lib:
             # propagate_type: (x: Tensor)
-            
             for i in range(self.num_relations):
                 # print("Relation number:", i)
                 tmp = masked_edge_index(edge_index, edge_type == i)
@@ -161,9 +160,9 @@ class RGCNConv(MessagePassing):
                 h.append(self.propagate(masked_edge_index(edge_index, edge_type == i), x=x_l, size=size) )     
             ptr = torch.tensor([i for i in range(0, h[0].shape[0] * (self.num_relations + 1), h[0].shape[0])])
             h = torch.cat(h)
-            print('inputs.shape=', h.shape)
-            print('ptr=',ptr)
-            print('weight.shape=', weight.shape)
+            # print('inputs.shape=', h.shape)
+            # print('ptr=',ptr)
+            # print('weight.shape=', weight.shape)
             assert not torch.isnan(h).any() and not torch.isinf(h).any()
             assert not torch.isnan(weight).any() and not torch.isinf(weight).any()
             o_tmp = torch.ops.pyg.segment_matmul(h, ptr, weight)
@@ -181,7 +180,7 @@ class RGCNConv(MessagePassing):
         if self.bias is not None:
             out += self.bias
         assert not torch.isnan(out).any() and not torch.isinf(out).any()
-        print('out.shape=',out.shape)
+        # print('out.shape=',out.shape)
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
