@@ -173,9 +173,9 @@ class RGCNConv(MessagePassing):
                 ctr += h.shape[0]
                 ptr.append(ctr)
             ptr = torch.tensor(ptr)
-            # print('inputs.shape=', h.shape)    
-            # print('ptr=',ptr)
-            # print('weight.shape=', weight.shape)
+            print('inputs.shape=', h.shape)
+            print('ptr=',ptr)
+            print('weight.shape=', weight.shape)
             out = torch.ops.pyg.segment_matmul(h, ptr, weight)
 
         if self.bias is not None:
