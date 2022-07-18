@@ -167,6 +167,7 @@ class RGCNConv(MessagePassing):
             assert not torch.isnan(h).any() and not torch.isinf(h).any()
             assert not torch.isnan(weight).any() and not torch.isinf(weight).any()
             o_tmp = torch.ops.pyg.segment_matmul(h, ptr, weight)
+            assert not torch.isnan(o_tmp).any() and not torch.isinf(o_tmp).any()
             out += sum(torch.tensor_split(o_tmp, self.num_relations))
             assert not torch.isnan(out).any() and not torch.isinf(out).any()
             # h = self.propagate(edge_index, x=x_l, size=size)      
