@@ -702,7 +702,7 @@ class Net(torch.nn.Module):
     def __init__(self, lib):
         super().__init__()
         self.conv1 = RGCNConv(128, 16, 8, lib=lib)
-        self.l2 = RGCNConv(16, n_classes, 8, lib=lib)
+        self.l2 = RGCNConv(16, 2, 8, lib=lib)
         # self.l2 = nn.Linear(16, n_classes)
 
     def forward(self, x, edge_index, edge_type):
