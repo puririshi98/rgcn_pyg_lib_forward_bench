@@ -9,7 +9,7 @@ from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
-
+import math
 
 def masked_edge_index(edge_index, edge_mask):
     return edge_index[:, edge_mask]
