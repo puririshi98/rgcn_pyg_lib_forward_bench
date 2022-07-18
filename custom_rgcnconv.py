@@ -7,27 +7,12 @@ from torch.nn import Parameter
 from torch.nn import Parameter as Param
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
-import time
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 
-@torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
-    # type: (Tensor, Tensor) -> Tensor
-    pass
-
-
-@torch.jit._overload
-def masked_edge_index(edge_index, edge_mask):
-    # type: (SparseTensor, Tensor) -> SparseTensor
-    pass
-
 
 def masked_edge_index(edge_index, edge_mask):
-    if isinstance(edge_index, Tensor):
-        return edge_index[:, edge_mask]
-    else:
-        return masked_select_nnz(edge_index, edge_mask, layout='coo')
+    return edge_index[:, edge_mask]
 
 
 class RGCNConv(MessagePassing):
@@ -165,13 +150,22 @@ class RGCNConv(MessagePassing):
                 # print('weight[i].shape=',weight[i].shape)
                 out = out + (h @ weight[i])
         else:
-            h = self.propagate(edge_index, x=x_l, size=size)
-            ptr = torch.tensor([i for i in range(0, h.shape[0] * (self.num_relations + 1), h.shape[0])])
-            h = h.repeat(self.num_relations, 1)
+            h = []
+            for i in range(self.num_relations):
+                h.append(self.propagate(masked_edge_index(edge_index, edge_type == i), x=x_l, size=size) )     
+            ptr = torch.tensor([i for i in range(0, h[0].shape[0] * (self.num_relations + 1), h[0].shape[0])])
+            h = torch.cat(h)
             print('inputs.shape=', h.shape)
             print('ptr=',ptr)
             print('weight.shape=', weight.shape)
             out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
+            # h = self.propagate(edge_index, x=x_l, size=size)      
+            # ptr = torch.tensor([i for i in range(0, h.shape[0] * (self.num_relations + 1), h.shape[0])])
+            # h = h.repeat(self.num_relations, 1)
+            # print('inputs.shape=', h.shape)
+            # print('ptr=',ptr)
+            # print('weight.shape=', weight.shape)
+            # out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
 
         if self.bias is not None:
             out += self.bias
