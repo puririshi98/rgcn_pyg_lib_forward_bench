@@ -169,13 +169,11 @@ class RGCNConv(MessagePassing):
             hs = []
             ctr = 0
             h = self.propagate(edge_index, x=x_l, size=size)
-            print('h.shape=', h.shape)
-            h = h.repeat(self.num_relations, 1)
-            print('h.repeat.shape=', h.shape)
             for i in range(self.num_relations):
                 ctr += h.shape[0]
                 ptr.append(ctr)
             ptr = torch.tensor(ptr)
+            h = h.repeat(self.num_relations, 1)
             print('inputs.shape=', h.shape)
             print('ptr=',ptr)
             print('weight.shape=', weight.shape)
