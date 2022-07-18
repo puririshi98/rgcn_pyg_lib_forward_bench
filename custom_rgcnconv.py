@@ -14,6 +14,15 @@ from torch_geometric.typing import Adj, OptTensor
 def masked_edge_index(edge_index, edge_mask):
     return edge_index[:, edge_mask]
 
+def constant(value: Any, fill_value: float):
+    value.data.fill_(fill_value)
+
+def zeros(value: Any):
+    constant(value, 0.)
+
+def glorot(value: Any):
+    stdv = math.sqrt(6.0 / (value.size(-2) + value.size(-1)))
+    value.data.uniform_(-stdv, stdv)
 
 class RGCNConv(MessagePassing):
     r"""The relational graph convolutional operator from the `"Modeling
@@ -93,7 +102,13 @@ class RGCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
         self.sumtime = 0
+        self.reset_parameters()
 
+    def reset_parameters(self):
+        glorot(self.weight)
+        glorot(self.comp)
+        glorot(self.root)
+        zeros(self.bias)
     def forward(self, x, edge_index, edge_type):
         r"""
         Args:
