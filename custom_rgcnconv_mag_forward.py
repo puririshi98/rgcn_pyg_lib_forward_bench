@@ -707,7 +707,7 @@ class Net(torch.nn.Module):
 
     def forward(self, x, edge_index, edge_type):
         x = F.relu(self.conv1(x, edge_index, edge_type))
-        x = self.conv2(x, edge_index, edge_type)
+        x = self.l2(x, edge_index, edge_type)
         # x = self.l2(x)
         return F.log_softmax(x, dim=1)
 model = Net(bool(int(sys.argv[2]))).to(sys.argv[1])
