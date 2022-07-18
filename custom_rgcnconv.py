@@ -134,9 +134,10 @@ class RGCNConv(MessagePassing):
             pyg_lib_avail = True
         except:
             pyg_lib_avail = False
+        out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
         if not self.lib:
             # propagate_type: (x: Tensor)
-            out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
+            
             for i in range(self.num_relations):
                 # print("Relation number:", i)
                 tmp = masked_edge_index(edge_index, edge_type == i)
@@ -157,7 +158,7 @@ class RGCNConv(MessagePassing):
             print('inputs.shape=', h.shape)
             print('ptr=',ptr)
             print('weight.shape=', weight.shape)
-            out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
+            out += sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
             # h = self.propagate(edge_index, x=x_l, size=size)      
             # ptr = torch.tensor([i for i in range(0, h.shape[0] * (self.num_relations + 1), h.shape[0])])
             # h = h.repeat(self.num_relations, 1)
