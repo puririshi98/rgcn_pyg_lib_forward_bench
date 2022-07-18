@@ -114,7 +114,7 @@ def make_pyg_loader(graph, metadata, device):
         num_neighbors=[50, 50],
         batch_size=1024,
         shuffle=True,
-        input_nodes=graph.labeled_node_type,
+        input_nodes=(graph.labeled_node_type, None),
         drop_last=False,
         num_workers=num_work,
         replace=True,
