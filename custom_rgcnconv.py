@@ -178,7 +178,7 @@ class RGCNConv(MessagePassing):
             # out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
 
         if self.bias is not None:
-            out += self.bias
+            out += self.bias/0
         assert not torch.isnan(out).any() and not torch.isinf(out).any()
         # print('out.shape=',out.shape)
         return out
