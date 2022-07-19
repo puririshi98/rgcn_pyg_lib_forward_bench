@@ -170,6 +170,8 @@ class RGCNConv(MessagePassing):
 
             # algo3: attempt at reconciling the two (we want numerically correct and no for loops)(4x)            
             self.edge_ptr = edge_ptr
+            print('x_l.shape=',x_l.shape.shape)
+            print('edge_index.shape=',edge_index.shape)
             h = self.propagate(edge_index, x=x_l, size=size)
 
 
