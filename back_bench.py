@@ -701,7 +701,7 @@ n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
     def __init__(self, lib):
         super().__init__()
-        self.conv1 = RGCNConv(128, 16, 8, lib=lib)
+        self.conv1 = RGCNConv(128, 349, 8, lib=lib)
         # self.l2 = RGCNConv(16, 349, 8, lib=lib)
 
     def forward(self, x, edge_index, edge_type, edge_ptr):
