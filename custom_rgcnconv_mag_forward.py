@@ -707,9 +707,7 @@ class Net(torch.nn.Module):
     def forward(self, x, edge_index, edge_type, edge_ptr):
         x = (self.conv1(x, edge_index, edge_type, edge_ptr))
         x = F.relu(x)
-        torch.cuda.synchronize()
-        x = (self.conv1(x, edge_index, edge_type, edge_ptr))
-        # x = self.l2(x, edge_index, edge_type, edge_ptr)
+        x = self.l2(x, edge_index, edge_type, edge_ptr)
         return x
         # return F.log_softmax(x, dim=1)
 
