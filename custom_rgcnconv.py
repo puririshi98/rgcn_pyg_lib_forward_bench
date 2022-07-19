@@ -168,7 +168,8 @@ class RGCNConv(MessagePassing):
             # h = h.repeat(self.num_relations, 1)
             # out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
 
-            # algo3: attempt at reconciling the two (we want numerically correct and no for loops)(4x)            
+            # algo3: attempt at reconciling the two (we want numerically correct and no for loops)(2x)
+            # segment matmul done in message passing          
             self.edge_ptr = edge_ptr
             # print('x_l.shape=',x_l.shape)
             # print('edge_index.shape=',edge_index.shape)
