@@ -745,7 +745,8 @@ for i, batch in enumerate(data_object.train_dataloader):
     if i==4:
         since=time.time()
     out = model(x, edge_index, edge_type)
-    sumtime += time.time() - since
+    if i>=4:
+        sumtime += time.time() - since
     if i==99:
         break
 print('Average forward pass time:', sumtime/95.0)
