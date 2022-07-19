@@ -182,6 +182,9 @@ class RGCNConv(MessagePassing):
 
     def message(self, x_j: Tensor) -> Tensor:
         if self.lib:
+            print('x_j.shape=', x_j.shape)
+            print('edge_ptr=', self.edge_ptr)
+            print('self.weight.shape=', self.weight.shape)
             return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
         else:
             return x_j
