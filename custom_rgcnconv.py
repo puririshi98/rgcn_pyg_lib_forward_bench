@@ -171,22 +171,22 @@ class RGCNConv(MessagePassing):
             # assert not torch.isnan(out).any() and not torch.isinf(out).any()
 
             # not numerically correct but super fast(4.8x)
-            # h = self.propagate(edge_index, x=x_l, size=size)      
-            # ptr = torch.tensor([i for i in range(0, h.shape[0] * (self.num_relations + 1), h.shape[0])])
-            # h = h.repeat(self.num_relations, 1)
-            # # print('inputs.shape=', h.shape)
-            # # print('ptr=',ptr)
-            # # print('weight.shape=', weight.shape)
-            # out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
-
-            #attempt at reconciling the two (numerically correct and no for loops)(8.6x)            
-            ptr = torch.tensor([i for i in range(0, x_l.shape[0] * (self.num_relations + 1), x_l.shape[0])])
-            x_l = x_l.repeat(self.num_relations, 1)
-            # print('inputs.shape=', x_l.shape)
+            h = self.propagate(edge_index, x=x_l, size=size)      
+            ptr = torch.tensor([i for i in range(0, h.shape[0] * (self.num_relations + 1), h.shape[0])])
+            h = h.repeat(self.num_relations, 1)
+            # print('inputs.shape=', h.shape)
             # print('ptr=',ptr)
             # print('weight.shape=', weight.shape)
-            x_in = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(x_l, ptr, weight), self.num_relations))
-            h = self.propagate(edge_index, x=x_in, size=size)
+            out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
+
+            #attempt at reconciling the two (numerically correct and no for loops)(4x)            
+            # ptr = torch.tensor([i for i in range(0, x_l.shape[0] * (self.num_relations + 1), x_l.shape[0])])
+            # x_l = x_l.repeat(self.num_relations, 1)
+            # # print('inputs.shape=', x_l.shape)
+            # # print('ptr=',ptr)
+            # # print('weight.shape=', weight.shape)
+            # x_in = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(x_l, ptr, weight), self.num_relations))
+            # h = self.propagate(edge_index, x=x_in, size=size)
 
 
 
