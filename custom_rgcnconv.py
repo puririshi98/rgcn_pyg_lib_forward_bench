@@ -100,11 +100,12 @@ class RGCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
         self.reset_parameters()
+        self.edge_ptr = torch.zeros(self.num_relations+1)
 
     def reset_parameters(self):
         glorot(self.weight)
 
-    def forward(self, x, edge_index, edge_type):
+    def forward(self, x, edge_index, edge_type, edge_ptr):
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
@@ -135,13 +136,11 @@ class RGCNConv(MessagePassing):
 
         size = (x_l.size(0), x_r.size(0))
 
-
-
-        weight = self.weight
-        # use pyg-lib segment_matmul
-        out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
         if not self.lib:
             # propagate_type: (x: Tensor)
+            weight = self.weight
+            # use pyg-lib segment_matmul
+            out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
             for i in range(self.num_relations):
                 # print("Relation number:", i)
                 tmp = masked_edge_index(edge_index, edge_type == i)
@@ -170,9 +169,7 @@ class RGCNConv(MessagePassing):
             # out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
 
             # algo3: attempt at reconciling the two (we want numerically correct and no for loops)(4x)            
-            ptr = torch.tensor([i for i in range(0, x_l.shape[0] * (self.num_relations + 1), x_l.shape[0])])
-            x_l = x_l.repeat(self.num_relations, 1)
-            x_in = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(x_l, ptr, weight), self.num_relations))
+            self.edge_ptr = edge_ptr
             h = self.propagate(edge_index, x=x_in, size=size)
 
 
@@ -184,7 +181,7 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
-        return x_j
+        return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t = adj_t.set_value(None)
