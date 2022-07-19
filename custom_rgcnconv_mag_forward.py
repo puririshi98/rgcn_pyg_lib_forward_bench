@@ -702,14 +702,12 @@ class Net(torch.nn.Module):
     def __init__(self, lib):
         super().__init__()
         self.conv1 = RGCNConv(128, 16, 8, lib=lib)
-        #self.l2 = RGCNConv(16, 2, 8, lib=lib)
-        # self.l2 = nn.Linear(16, n_classes)
+        self.l2 = RGCNConv(16, 349, 8, lib=lib)
 
     def forward(self, x, edge_index, edge_type, edge_ptr):
         x = (self.conv1(x, edge_index, edge_type, edge_ptr))
         x = F.relu(x)
         x = self.l2(x, edge_index, edge_type, edge_ptr)
-        # x = self.l2(x)
         return F.log_softmax(x, dim=1)
         return x
 model = Net(bool(int(sys.argv[2]))).to(sys.argv[1])
