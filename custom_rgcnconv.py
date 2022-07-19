@@ -10,7 +10,11 @@ from torch_sparse import SparseTensor, masked_select_nnz, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 import math
-
+try:
+    import pyg_lib
+    pyg_lib_avail = True
+except:
+    pyg_lib_avail = False
 def masked_edge_index(edge_index, edge_mask):
     return edge_index[:, edge_mask]
 
@@ -135,11 +139,6 @@ class RGCNConv(MessagePassing):
 
         weight = self.weight
         # use pyg-lib segment_matmul
-        try:
-            import pyg_lib
-            pyg_lib_avail = True
-        except:
-            pyg_lib_avail = False
         out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
         if not self.lib:
             # propagate_type: (x: Tensor)
