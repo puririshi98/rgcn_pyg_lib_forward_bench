@@ -188,6 +188,12 @@ class RGCNConv(MessagePassing):
             # print('x_j.shape=', x_j.shape)
             # print('edge_ptr=', self.edge_ptr)
             # print('self.weight.shape=', self.weight.shape)
+            assert not torch.isnan(x_j).any()
+            assert not torch.isnan(self.edge_ptr).any()
+            assert not torch.isnan(self.weight).any()
+            assert not torch.isinf(x_j).any()
+            assert not torch.isinf(self.edge_ptr).any()
+            assert not torch.isinf(self.weight).any()
             return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
         else:
             return x_j
