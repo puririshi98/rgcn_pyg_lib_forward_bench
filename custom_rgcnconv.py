@@ -170,7 +170,7 @@ class RGCNConv(MessagePassing):
 
             # algo3: attempt at reconciling the two (we want numerically correct and no for loops)(4x)            
             self.edge_ptr = edge_ptr
-            h = self.propagate(edge_index, x=x_in, size=size)
+            h = self.propagate(edge_index, x=x_l, size=size)
 
 
 
