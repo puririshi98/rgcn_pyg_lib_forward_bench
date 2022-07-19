@@ -710,7 +710,7 @@ class Net(torch.nn.Module):
         #x = F.relu(x)
         # x = self.l2(x, edge_index, edge_type)
         # x = self.l2(x)
-        # return F.log_softmax(x, dim=1)
+        return F.log_softmax(x, dim=1)
         return x
 model = Net(bool(int(sys.argv[2]))).to(sys.argv[1])
 import time
