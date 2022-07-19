@@ -739,7 +739,7 @@ def fuse_batch(batch):
             e_idx_dict[e_type][1, :], sort_indices = torch.sort(e_idx_dict[e_type][1, :])
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, sort_indices]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-            ct += int(increment_dict[dst_type])
+            ct += int(e_idx_dict[e_type].shape[-1])
             edge_ptr.append(ct)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
