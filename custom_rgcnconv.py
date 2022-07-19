@@ -155,6 +155,7 @@ class RGCNConv(MessagePassing):
                 # print('weight[i].shape=',weight[i].shape)
                 out = out + (h @ weight[i])
         else:
+            # not as fast(stil 2.7x speedup over vanilla gpu) but correct
             # h = []
             # for i in range(self.num_relations):
             #     h.append(self.propagate(masked_edge_index(edge_index, edge_type == i), x=x_l, size=size) )     
@@ -169,6 +170,8 @@ class RGCNConv(MessagePassing):
             # # assert not torch.isnan(o_tmp).any() and not torch.isinf(o_tmp).any()
             # out += sum(torch.tensor_split(o_tmp, self.num_relations))
             # assert not torch.isnan(out).any() and not torch.isinf(out).any()
+
+            # not numerically correct but super fast
             h = self.propagate(edge_index, x=x_l, size=size)      
             ptr = torch.tensor([i for i in range(0, h.shape[0] * (self.num_relations + 1), h.shape[0])])
             h = h.repeat(self.num_relations, 1)
