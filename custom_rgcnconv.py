@@ -156,19 +156,19 @@ class RGCNConv(MessagePassing):
                 out = out + (h @ weight[i])
         else:
             # not as fast(stil 2.7x speedup over vanilla gpu) but correct
-            h = []
-            for i in range(self.num_relations):
-                h.append(self.propagate(masked_edge_index(edge_index, edge_type == i), x=x_l, size=size) )     
-            ptr = torch.tensor([i for i in range(0, h[0].shape[0] * (self.num_relations + 1), h[0].shape[0])])
-            h = torch.cat(h)
-            # print('inputs.shape=', h.shape)
-            # print('ptr=',ptr)
-            # print('weight.shape=', weight.shape)
-            # assert not torch.isnan(h).any() and not torch.isinf(h).any()
-            # assert not torch.isnan(weight).any() and not torch.isinf(weight).any()
-            o_tmp = torch.ops.pyg.segment_matmul(h, ptr, weight)
-            # assert not torch.isnan(o_tmp).any() and not torch.isinf(o_tmp).any()
-            out += sum(torch.tensor_split(o_tmp, self.num_relations))
+            # h = []
+            # for i in range(self.num_relations):
+            #     h.append(self.propagate(masked_edge_index(edge_index, edge_type == i), x=x_l, size=size) )     
+            # ptr = torch.tensor([i for i in range(0, h[0].shape[0] * (self.num_relations + 1), h[0].shape[0])])
+            # h = torch.cat(h)
+            # # print('inputs.shape=', h.shape)
+            # # print('ptr=',ptr)
+            # # print('weight.shape=', weight.shape)
+            # # assert not torch.isnan(h).any() and not torch.isinf(h).any()
+            # # assert not torch.isnan(weight).any() and not torch.isinf(weight).any()
+            # o_tmp = torch.ops.pyg.segment_matmul(h, ptr, weight)
+            # # assert not torch.isnan(o_tmp).any() and not torch.isinf(o_tmp).any()
+            # out += sum(torch.tensor_split(o_tmp, self.num_relations))
             # assert not torch.isnan(out).any() and not torch.isinf(out).any()
 
             # not numerically correct but super fast
@@ -179,6 +179,14 @@ class RGCNConv(MessagePassing):
             # # print('ptr=',ptr)
             # # print('weight.shape=', weight.shape)
             # out = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(h, ptr, weight), self.num_relations))
+
+            #attempt at reconciling the two (numerically correct and no for loops)
+            x_l = x_l.repeat(self.num_relations, 1)
+            ptr = torch.tensor([i for i in range(0, x_l.shape[0] * (self.num_relations + 1), x_l.shape[0])])
+            x_in = sum(torch.tensor_split(torch.ops.pyg.segment_matmul(x_l, ptr, weight), self.num_relations))
+            h = self.propagate(edge_index, x=x_in, size=size)
+
+
 
         if self.bias is not None:
             out += self.bias
