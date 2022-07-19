@@ -170,9 +170,9 @@ class RGCNConv(MessagePassing):
 
             # algo3: attempt at reconciling the two (we want numerically correct and no for loops)(4x)            
             self.edge_ptr = edge_ptr
-            print('x_l.shape=',x_l.shape)
-            print('edge_index.shape=',edge_index.shape)
-            h = self.propagate(edge_index, x=x_l, size=size)
+            # print('x_l.shape=',x_l.shape)
+            # print('edge_index.shape=',edge_index.shape)
+            out = self.propagate(edge_index, x=x_l, size=size)
 
 
 
@@ -184,9 +184,9 @@ class RGCNConv(MessagePassing):
 
     def message(self, x_j: Tensor) -> Tensor:
         if self.lib:
-            print('x_j.shape=', x_j.shape)
-            print('edge_ptr=', self.edge_ptr)
-            print('self.weight.shape=', self.weight.shape)
+            # print('x_j.shape=', x_j.shape)
+            # print('edge_ptr=', self.edge_ptr)
+            # print('self.weight.shape=', self.weight.shape)
             return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
         else:
             return x_j
