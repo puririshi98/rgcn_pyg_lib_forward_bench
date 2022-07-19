@@ -748,9 +748,7 @@ for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type, edge_ptr = fuse_batch(batch)
     
     out = model(x, edge_index, edge_type, edge_ptr)
-    print(out.shape)
     target = batch['paper'].y[:1024]
-    print(target)
     loss = criterion(out[:1024], target)
     if i>=4: # warmup
         since=time.time()
