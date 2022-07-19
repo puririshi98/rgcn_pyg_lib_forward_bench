@@ -742,7 +742,7 @@ def fuse_batch(batch):
     return x, eidx, edge_types
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type = fuse_batch(batch)
-    if i==4: # warmup
+    if i>=4: # warmup
         since=time.time()
     out = model(x, edge_index, edge_type)
     if i>=4:
