@@ -742,10 +742,11 @@ def fuse_batch(batch):
     return x, eidx, edge_types
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type = fuse_batch(batch)
-    since=time.time()
+    if i==4:
+        since=time.time()
     out = model(x, edge_index, edge_type)
     sumtime += time.time() - since
-    if i==49:
+    if i==99:
         break
-print('Average forward pass time:', sumtime/50.0)
+print('Average forward pass time:', sumtime/95.0)
 torch.cuda.empty_cache()
