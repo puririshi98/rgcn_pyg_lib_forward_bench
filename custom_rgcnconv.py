@@ -181,7 +181,10 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
-        return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
+        if self.lib:
+            return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
+        else:
+            return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t = adj_t.set_value(None)
