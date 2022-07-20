@@ -100,7 +100,6 @@ class RGCNConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
         self.reset_parameters()
-        self.edge_ptr = torch.zeros(self.num_relations+1)
 
     def reset_parameters(self):
         glorot(self.weight)
