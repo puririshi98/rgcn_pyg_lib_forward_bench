@@ -754,6 +754,7 @@ for i, batch in enumerate(data_object.train_dataloader):
     loss.backward()
     if i>=4:
         sumtime += time.time() - since
+        print(model.l2.weight)
     if i==99:
         break
 print('Average backward pass time:', sumtime/95.0)
