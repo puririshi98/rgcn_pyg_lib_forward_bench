@@ -704,10 +704,10 @@ class Net(torch.nn.Module):
         self.conv1 = RGCNConv(128, 16, 8, lib=lib)
         self.l2 = RGCNConv(16, 349, 8, lib=lib)
 
-    def forward(self, x, edge_index, edge_type, edge_ptr):
-        x = (self.conv1(x, edge_index, edge_type, edge_ptr))
+    def forward(self, x, edge_index, edge_type):
+        x = (self.conv1(x, edge_index, edge_type))
         x = F.relu(x)
-        x = self.l2(x, edge_index, edge_type, edge_ptr)
+        x = self.l2(x, edge_index, edge_type)
         return x
 lib = bool(int(sys.argv[2]))
 model = Net(lib).to(sys.argv[1])
@@ -725,8 +725,6 @@ def fuse_batch(batch):
         increment_dict[node_type] = ctr
         ctr += num_node_dict[node_type]
     e_idx_dict = batch.collect('edge_index')
-    edge_ptr = [0]
-    ct = 0
     etypes_list = []
     for i, e_type in enumerate(e_idx_dict.keys()):
         src_type, dst_type = e_type[0], e_type[-1]
@@ -734,18 +732,16 @@ def fuse_batch(batch):
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-            ct += int(e_idx_dict[e_type].shape[-1])
-            edge_ptr.append(ct)
     edge_types = torch.cat(etypes_list)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
-    return x, eidx, edge_types, torch.tensor(edge_ptr)
+    return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()
 forward_sumtime = 0
 for i, batch in enumerate(data_object.train_dataloader):
-    x, edge_index, edge_type, edge_ptr = fuse_batch(batch)
+    x, edge_index, edge_type = fuse_batch(batch)
     if i>=4:
         since=time.time()
-    out = model(x, edge_index, edge_type, edge_ptr)
+    out = model(x, edge_index, edge_type)
     if i>=4:
         forward_sumtime += time.time() - since
     target = batch['paper'].y[:1024]

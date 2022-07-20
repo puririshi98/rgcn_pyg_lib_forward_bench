@@ -105,7 +105,7 @@ class RGCNConv(MessagePassing):
     def reset_parameters(self):
         glorot(self.weight)
 
-    def forward(self, x, edge_index, edge_type, edge_ptr):
+    def forward(self, x, edge_index, edge_type):
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
