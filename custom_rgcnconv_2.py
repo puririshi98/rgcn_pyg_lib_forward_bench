@@ -147,6 +147,8 @@ class RGCNConv(MessagePassing):
                 out = out + (h @ weight[i])
         else:
             edge_type, sort_by_edge_type = torch.sort(edge_type)
+            print(edge_type.shape)
+            print(sort_by_edge_type.shape)
             edge_index = edge_index[sort_by_edge_type]
             self.edge_ptr = torch.cumsum(
                 torch.unique_consecutive(edge_type,
@@ -158,8 +160,6 @@ class RGCNConv(MessagePassing):
 
         if self.bias is not None:
             out += self.bias
-        # assert not torch.isnan(out).any() and not torch.isinf(out).any()
-        # print('out.shape=',out.shape)
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
