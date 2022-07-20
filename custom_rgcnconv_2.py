@@ -150,7 +150,7 @@ class RGCNConv(MessagePassing):
             edge_index = edge_index[:, sort_by_edge_type]
             self.edge_ptr = torch.cumsum(
                 torch.unique_consecutive(edge_type, return_counts=True)[1], dim=0)
-            self.edge_ptr = torch.cat(torch.tensor([0]), self.edge_ptr)
+            self.edge_ptr = torch.cat((torch.tensor([0]), self.edge_ptr))
             out = self.propagate(edge_index, x=x_l, size=size)
 
 
