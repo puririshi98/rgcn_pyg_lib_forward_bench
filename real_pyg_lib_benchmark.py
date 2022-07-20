@@ -751,8 +751,8 @@ for i, batch in enumerate(data_object.train_dataloader):
     loss.backward()
     if i>=4:
         sumtime += time.time() - since
-    if i==0 and lib:
-        print(model.l2.weight.grad)
+    if i==0:
+        print(model.conv1.weight.grad)
     if i==99:
         break
 print('Average forward pass time:', forward_sumtime/95.0)
