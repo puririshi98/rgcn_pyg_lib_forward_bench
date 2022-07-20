@@ -709,8 +709,8 @@ class Net(torch.nn.Module):
         x = F.relu(x)
         x = self.l2(x, edge_index, edge_type, edge_ptr)
         return x
-
-model = Net(bool(int(sys.argv[2]))).to(sys.argv[1])
+lib = bool(int(sys.argv[2]))
+model = Net(lib).to(sys.argv[1])
 import time
 sumtime = 0
 
@@ -755,7 +755,7 @@ for i, batch in enumerate(data_object.train_dataloader):
     loss.backward()
     if i>=4:
         sumtime += time.time() - since
-    if i==0:
+    if i==0 and lib:
         print(model.l2.weight.grad)
     if i==99:
         break
