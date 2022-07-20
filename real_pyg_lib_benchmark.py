@@ -743,7 +743,7 @@ criterion = torch.nn.CrossEntropyLoss()
 forward_sumtime = 0
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type, edge_ptr = fuse_batch(batch)
-    if i>=4
+    if i>=4:
     out = model(x, edge_index, edge_type, edge_ptr)
     target = batch['paper'].y[:1024]
     loss = criterion(out[:1024], target)
