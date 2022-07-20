@@ -744,7 +744,10 @@ forward_sumtime = 0
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type, edge_ptr = fuse_batch(batch)
     if i>=4:
+        since=time.time()
     out = model(x, edge_index, edge_type, edge_ptr)
+    if i>=4:
+        forward_sumtime += time.time() - since
     target = batch['paper'].y[:1024]
     loss = criterion(out[:1024], target)
     if i>=4: # warmup
@@ -752,7 +755,8 @@ for i, batch in enumerate(data_object.train_dataloader):
     loss.backward()
     if i>=4:
         sumtime += time.time() - since
-        print(model.l2.weight)
+    if i==0:
+        print(model.l2.weight.grad)
     if i==99:
         break
 print('Average forward pass time:', sumtime/95.0)
