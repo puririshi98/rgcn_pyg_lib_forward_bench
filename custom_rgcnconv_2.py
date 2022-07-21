@@ -160,7 +160,7 @@ class RGCNConv(MessagePassing):
 
     def message(self, x_j: Tensor) -> Tensor:
         if self.lib:
-            return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
+            return pyg_lib.ops.segment_matmul(x_j, self.edge_ptr, self.weight)
         else:
             return x_j
 

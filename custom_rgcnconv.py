@@ -194,7 +194,7 @@ class RGCNConv(MessagePassing):
             assert not torch.isinf(x_j).any()
             assert not torch.isinf(self.edge_ptr).any()
             assert not torch.isinf(self.weight).any()
-            return torch.ops.pyg.segment_matmul(x_j, self.edge_ptr, self.weight)
+            return pyg_lib.ops.segment_matmul(x_j, self.edge_ptr, self.weight)
         else:
             return x_j
 
