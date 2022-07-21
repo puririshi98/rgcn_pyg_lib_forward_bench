@@ -744,15 +744,15 @@ for i, batch in enumerate(data_object.train_dataloader):
     out = model(x, edge_index, edge_type)
     if i>=4:
         forward_sumtime += time.time() - since
-    target = batch['paper'].y[:1024]
-    loss = criterion(out[:1024], target)
-    if i>=4: # warmup
-        since=time.time()
-    loss.backward()
-    if i>=4:
-        sumtime += time.time() - since
-    if i==0:
-        print(model.conv1.weight.grad)
+    # target = batch['paper'].y[:1024]
+    # loss = criterion(out[:1024], target)
+    # if i>=4: # warmup
+    #     since=time.time()
+    # loss.backward()
+    # if i>=4:
+    #     sumtime += time.time() - since
+    # if i==0:
+    #     print(model.conv1.weight.grad)
     if i==99:
         break
 print('Average forward pass time:', forward_sumtime/95.0)
