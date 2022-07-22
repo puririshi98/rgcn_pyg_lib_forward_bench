@@ -159,9 +159,6 @@ class RGCNConv(MessagePassing):
 
     def message(self, x_j: Tensor) -> Tensor:
         if self.lib:
-            print(x_j.device)
-            print(self.edge_ptr.device)
-            print(self.weight.device)
             return pyg_lib.ops.segment_matmul(x_j, self.edge_ptr, self.weight)
         else:
             return x_j
