@@ -702,7 +702,7 @@ class Net(torch.nn.Module):
     def __init__(self, lib):
         super().__init__()
         self.conv1 = RGCNConv(128, 16, 8, lib=lib)
-        self.l2 = RGCNConv(16, 352, 8, lib=lib)
+        self.l2 = RGCNConv(16, 349, 8, lib=lib)
 
     def forward(self, x, edge_index, edge_type):
         x = (self.conv1(x, edge_index, edge_type))
@@ -732,7 +732,7 @@ def fuse_batch(batch):
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-    edge_types = torch.cat(etypes_list).to(torch.long).to(sys.argv[1])
+    edge_types = torch.cat(etypes_list).to(torch.long)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
     return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()

@@ -146,6 +146,7 @@ class RGCNConv(MessagePassing):
                 out = out + (h @ weight[i])
         else:
             if not (edge_type[1:] >= edge_type[:-1]).all():
+                print("Warning: edges should be sorted by edge type")
                 edge_type, sort_by_edge_type = torch.sort(edge_type)
                 edge_index = edge_index[:, sort_by_edge_type]
             self.edge_ptr = torch.ops.torch_sparse.ind2ptr(edge_type, self.num_relations)
