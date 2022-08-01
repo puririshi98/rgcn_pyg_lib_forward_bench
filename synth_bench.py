@@ -185,6 +185,27 @@ def get_edge_index(num_src_nodes: int, num_dst_nodes: int, avg_degree: int,
     return edge_index
 
 from custom_rgcnconv_2 import RGCNConv
+def fuse_data(batch):
+    x_dict = batch.collect('x')
+    x = torch.cat(list(x_dict.values()), dim=0)
+    num_node_dict = batch.collect('num_nodes')
+    increment_dict = {}
+    ctr = 0
+    for node_type in num_node_dict:
+        increment_dict[node_type] = ctr
+        ctr += num_node_dict[node_type]
+    e_idx_dict = batch.collect('edge_index')
+    etypes_list = []
+    for i, e_type in enumerate(e_idx_dict.keys()):
+        src_type, dst_type = e_type[0], e_type[-1]
+        if torch.numel(e_idx_dict[e_type]) != 0:
+            e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
+            e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
+            etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
+    edge_types = torch.cat(etypes_list).to(torch.long).to(device)
+    eidx = torch.cat(list(e_idx_dict.values()), dim=1)
+    return x, eidx, edge_types
+
 
 def train(data, device='cpu', lib=False):
     torch.cuda.empty_cache()
@@ -206,31 +227,13 @@ def train(data, device='cpu', lib=False):
     model = Net(lib).to(device)
     sumtime = 0
 
-    def fuse_data(batch):
-        x_dict = batch.collect('x')
-        x = torch.cat(list(x_dict.values()), dim=0)
-        num_node_dict = batch.collect('num_nodes')
-        increment_dict = {}
-        ctr = 0
-        for node_type in num_node_dict:
-            increment_dict[node_type] = ctr
-            ctr += num_node_dict[node_type]
-        e_idx_dict = batch.collect('edge_index')
-        etypes_list = []
-        for i, e_type in enumerate(e_idx_dict.keys()):
-            src_type, dst_type = e_type[0], e_type[-1]
-            if torch.numel(e_idx_dict[e_type]) != 0:
-                e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
-                e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
-                etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-        edge_types = torch.cat(etypes_list).to(torch.long).to(device)
-        eidx = torch.cat(list(e_idx_dict.values()), dim=1)
-        return x, eidx, edge_types
+
     criterion = torch.nn.CrossEntropyLoss()
     forward_sumtime = 0
     x, edge_index, edge_type = fuse_data(data)
     x, edge_index, edge_type = x.to(device), edge_index.to(device), edge_type.to(device)
     for i in range(100):
+        print('i=',i)
         if i>=4:
             since=time.time()
         out = model(x, edge_index, edge_type)
@@ -247,7 +250,7 @@ def train(data, device='cpu', lib=False):
 
 def get_fresh_data(num_edge_types):
     torch_geometric.seed_everything(42)
-    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types, num_classes=349).data
+    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types).data
 
 fwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
