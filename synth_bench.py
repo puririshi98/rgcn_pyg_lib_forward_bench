@@ -234,8 +234,8 @@ def train(data, device='cpu', lib=False):
         num_node_dict = batch.collect('num_nodes')
         increment_dict = {}
         ctr = 0
-        print(x_dict)
         print(num_node_dict)
+        print(increment_dict)
         for node_type in num_node_dict:
             increment_dict[node_type] = ctr
             ctr += num_node_dict[node_type]
@@ -248,6 +248,7 @@ def train(data, device='cpu', lib=False):
                 e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
                 e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
                 etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
+        print(e_idx_dict)
         edge_types = torch.cat(etypes_list).to(torch.long).to(device)
         eidx = torch.cat(list(e_idx_dict.values()), dim=1)
         return x, eidx, edge_types
