@@ -214,6 +214,8 @@ def train(data, device='cpu', lib=False):
     torch.cuda.empty_cache()
     data = data.to(device)
     n_classes = torch.numel(torch.unique(data['v0'].y))
+    print(len(data.edge_types))
+    print(n_classes)
     class Net(torch.nn.Module):
         def __init__(self, lib):
             super().__init__()
@@ -234,13 +236,10 @@ def train(data, device='cpu', lib=False):
         num_node_dict = batch.collect('num_nodes')
         increment_dict = {}
         ctr = 0
-        print(num_node_dict)
         for node_type in num_node_dict:
             increment_dict[node_type] = ctr
             ctr += num_node_dict[node_type]
         e_idx_dict = batch.collect('edge_index')
-        print(increment_dict)
-        print(e_idx_dict)
         etypes_list = []
         for i, e_type in enumerate(e_idx_dict.keys()):
             src_type, dst_type = e_type[0], e_type[-1]
