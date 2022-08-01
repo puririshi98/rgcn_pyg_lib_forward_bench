@@ -185,7 +185,7 @@ def get_edge_index(num_src_nodes: int, num_dst_nodes: int, avg_degree: int,
     return edge_index
 
 from custom_rgcnconv_2 import RGCNConv
-def fuse_data(batch):
+def fuse_data(batch, device):
     x_dict = batch.collect('x')
     x = torch.cat(list(x_dict.values()), dim=0)
     num_node_dict = batch.collect('num_nodes')
@@ -204,6 +204,7 @@ def fuse_data(batch):
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
     edge_types = torch.cat(etypes_list).to(torch.long).to(device)
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
+    x, eidx, edge_types = x.to(device), eidx.to(device), edge_types.to(device)
     return x, eidx, edge_types
 
 
@@ -230,8 +231,7 @@ def train(data, device='cpu', lib=False):
 
     criterion = torch.nn.CrossEntropyLoss()
     forward_sumtime = 0
-    x, edge_index, edge_type = fuse_data(data)
-    x, edge_index, edge_type = x.to(device), edge_index.to(device), edge_type.to(device)
+    x, edge_index, edge_type = fuse_data(data, device)
     for i in range(100):
         print('i=',i)
         if i>=4:
