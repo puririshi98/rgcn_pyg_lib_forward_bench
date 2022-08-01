@@ -271,7 +271,7 @@ bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 for num_edge_types in [4, 8, 16, 32, 64, 128]:
     print("Timing num_edge_types=", str(num_edge_types) + str('...'))
     torch_geometric.seed_everything(42)
-    dataset = FakeHeteroDataset(num_node_types=4, num_edge_types=num_edge_types).data
+    data = FakeHeteroDataset(num_node_types=4, num_edge_types=num_edge_types).data
     avg_fwd, avg_bwd = train(data)
     fwd_times['cpu'].append(avg_fwd)
     bwd_times['cpu'].append(avg_bwd)
