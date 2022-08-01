@@ -240,6 +240,7 @@ def train(data, device='cpu', lib=False):
             ctr += num_node_dict[node_type]
         e_idx_dict = batch.collect('edge_index')
         etypes_list = []
+        print(increment_dict)
         for i, e_type in enumerate(e_idx_dict.keys()):
             src_type, dst_type = e_type[0], e_type[-1]
             if torch.numel(e_idx_dict[e_type]) != 0:
@@ -272,7 +273,7 @@ bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 for num_edge_types in [4, 8, 16, 32, 64, 128]:
     print("Timing num_edge_types=", str(num_edge_types) + str('...'))
     torch_geometric.seed_everything(42)
-    data = FakeHeteroDataset(num_node_types=4, num_edge_types=num_edge_types).data
+    data = FakeHeteroDataset(avg_num_nodes=50000, num_node_types=4, num_edge_types=num_edge_types).data
     avg_fwd, avg_bwd = train(data)
     fwd_times['cpu'].append(avg_fwd)
     bwd_times['cpu'].append(avg_bwd)
