@@ -257,7 +257,7 @@ def train(data, device='cpu', lib=False):
         out = model(x, edge_index, edge_type)
         if i>=4:
             forward_sumtime += time.time() - since
-        target = batch['paper'].y
+        target = data['v0'].y
         loss = criterion(out, target)
         if i>=4: # warmup
             since=time.time()
