@@ -184,30 +184,6 @@ def get_edge_index(num_src_nodes: int, num_dst_nodes: int, avg_degree: int,
 
     return edge_index
 
-def make_pyg_loader(graph, device):
-    num_work = None
-    if hasattr(os, "sched_getaffinity"):
-        try:
-            num_work = len(os.sched_getaffinity(0)) / 2
-        except Exception:
-            pass
-    if num_work is None:
-        num_work = os.cpu_count() / 2
-    num_work = int(num_work)
-    return NeighborLoader(
-        graph,
-        num_neighbors=[50, 50],
-        batch_size=1024,
-        shuffle=True,
-        input_nodes=(graph.labeled_node_type, None),
-        drop_last=False,
-        num_workers=num_work,
-        replace=True,
-        transform=T.Compose(T_list),
-    )
-
-DATA_DIR = "/workspace/data/"
-
 from custom_rgcnconv_2 import RGCNConv
 
 def train(data, device='cpu', lib=False):
@@ -247,7 +223,6 @@ def train(data, device='cpu', lib=False):
                 e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
                 e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
                 etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-        print(e_idx_dict)
         edge_types = torch.cat(etypes_list).to(torch.long).to(device)
         eidx = torch.cat(list(e_idx_dict.values()), dim=1)
         return x, eidx, edge_types
@@ -272,7 +247,7 @@ def train(data, device='cpu', lib=False):
 
 def get_fresh_data(num_edge_types):
     torch_geometric.seed_everything(42)
-    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types).data
+    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types, num_classes=16).data
 
 fwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
