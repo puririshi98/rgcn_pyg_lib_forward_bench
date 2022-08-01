@@ -250,7 +250,7 @@ def train(data, device='cpu', lib=False):
         return x, eidx, edge_types
     criterion = torch.nn.CrossEntropyLoss()
     forward_sumtime = 0
-    x, edge_index, edge_type = fuse_batch(data)
+    x, edge_index, edge_type = fuse_data(data)
     for i in range(100):
         if i>=4:
             since=time.time()
