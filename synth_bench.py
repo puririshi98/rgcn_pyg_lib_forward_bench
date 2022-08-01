@@ -233,8 +233,6 @@ def train(data, device='cpu', lib=False):
         num_node_dict = batch.collect('num_nodes')
         increment_dict = {}
         ctr = 0
-        print(batch)
-        print(num_node_dict)
         for node_type in num_node_dict:
             increment_dict[node_type] = ctr
             ctr += num_node_dict[node_type]
@@ -273,15 +271,18 @@ for num_edge_types in [4, 8, 16, 32, 64, 128]:
     print("Timing num_edge_types=", str(num_edge_types) + str('...'))
     torch_geometric.seed_everything(42)
     data = FakeHeteroDataset(avg_num_nodes=50000, num_node_types=4, num_edge_types=num_edge_types).data
-    avg_fwd, avg_bwd = train(data)
-    fwd_times['cpu'].append(avg_fwd)
-    bwd_times['cpu'].append(avg_bwd)
+    print('Timing vanilla gpu...')
     avg_fwd, avg_bwd = train(data, device='cuda')
     fwd_times['gpu'].append(avg_fwd)
     bwd_times['gpu'].append(avg_bwd)
+    print('Timing pyg_lib...')
     avg_fwd, avg_bwd = train(data, device='cuda', lib=True)
     fwd_times['pyg_lib'].append(avg_fwd)
     bwd_times['pyg_lib'].append(avg_bwd)
+    print('Timing cpu...')
+    avg_fwd, avg_bwd = train(data)
+    fwd_times['cpu'].append(avg_fwd)
+    bwd_times['cpu'].append(avg_bwd)
 print("Forward Times:", fwd_times)
 print("Backward Times:", bwd_times)
 
