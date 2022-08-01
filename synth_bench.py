@@ -254,7 +254,9 @@ def train(data, device='cpu', lib=False):
     for i in range(100):
         if i>=4:
             since=time.time()
+        print(x.shape, edge_index.shape, edge_type.shape)
         out = model(x, edge_index, edge_type)
+        print(out.shape)
         if i>=4:
             forward_sumtime += time.time() - since
         target = data['v0'].y
