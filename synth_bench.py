@@ -267,21 +267,26 @@ def train(data, device='cpu', lib=False):
             sumtime += time.time() - since
     return forward_sumtime/95.0, sumtime/95.0
 
+def get_fresh_data(num_edge_types):
+    torch_geometric.seed_everything(42)
+    return FakeHeteroDataset(avg_num_nodes=50000, num_node_types=4, num_edge_types=num_edge_types).data
+
 fwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 for num_edge_types in [4, 8, 16, 32, 64, 128]:
     print("Timing num_edge_types=", str(num_edge_types) + str('...'))
-    torch_geometric.seed_everything(42)
-    data = FakeHeteroDataset(avg_num_nodes=50000, num_node_types=4, num_edge_types=num_edge_types).data
+    get_fresh_data(num_edge_types)
     print('Timing vanilla gpu...')
     avg_fwd, avg_bwd = train(data, device='cuda')
     fwd_times['gpu'].append(avg_fwd)
     bwd_times['gpu'].append(avg_bwd)
     print('Timing pyg_lib...')
+    get_fresh_data(num_edge_types)
     avg_fwd, avg_bwd = train(data, device='cuda', lib=True)
     fwd_times['pyg_lib'].append(avg_fwd)
     bwd_times['pyg_lib'].append(avg_bwd)
     print('Timing cpu...')
+    get_fresh_data(num_edge_types)
     avg_fwd, avg_bwd = train(data)
     fwd_times['cpu'].append(avg_fwd)
     bwd_times['cpu'].append(avg_bwd)
