@@ -247,7 +247,7 @@ def train(data, device='cpu', lib=False):
 
 def get_fresh_data(num_edge_types):
     torch_geometric.seed_everything(42)
-    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types, num_classes=16).data
+    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types, num_classes=349).data
 
 fwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
