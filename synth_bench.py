@@ -233,7 +233,8 @@ def train(data, device='cpu', lib=False):
         num_node_dict = batch.collect('num_nodes')
         increment_dict = {}
         ctr = 0
-        
+        print(batch)
+        print(num_node_dict)
         for node_type in num_node_dict:
             increment_dict[node_type] = ctr
             ctr += num_node_dict[node_type]
@@ -254,9 +255,7 @@ def train(data, device='cpu', lib=False):
     for i in range(100):
         if i>=4:
             since=time.time()
-        print(x.shape, edge_index.shape, edge_type.shape)
         out = model(x, edge_index, edge_type)
-        print(out.shape)
         if i>=4:
             forward_sumtime += time.time() - since
         target = data['v0'].y
