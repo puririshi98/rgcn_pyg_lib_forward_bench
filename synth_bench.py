@@ -258,7 +258,7 @@ def train(data, device='cpu', lib=False):
         if i>=4:
             forward_sumtime += time.time() - since
         target = data['v0'].y
-        loss = criterion(out, target)
+        loss = criterion(out[:target.shape[0]], target)
         if i>=4: # warmup
             since=time.time()
         loss.backward()
