@@ -233,7 +233,6 @@ def train(data, device='cpu', lib=False):
     forward_sumtime = 0
     x, edge_index, edge_type = fuse_data(data, device)
     for i in range(100):
-        print('i=',i)
         if i>=4:
             since=time.time()
         out = model(x, edge_index, edge_type)
