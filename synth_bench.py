@@ -240,7 +240,6 @@ def train(data, device='cpu', lib=False):
             ctr += num_node_dict[node_type]
         e_idx_dict = batch.collect('edge_index')
         etypes_list = []
-        print(increment_dict)
         for i, e_type in enumerate(e_idx_dict.keys()):
             src_type, dst_type = e_type[0], e_type[-1]
             if torch.numel(e_idx_dict[e_type]) != 0:
@@ -253,7 +252,6 @@ def train(data, device='cpu', lib=False):
     criterion = torch.nn.CrossEntropyLoss()
     forward_sumtime = 0
     x, edge_index, edge_type = fuse_data(data)
-    print(edge_index.max())
     for i in range(100):
         if i>=4:
             since=time.time()
