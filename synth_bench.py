@@ -254,11 +254,6 @@ bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 for num_edge_types in [4, 8, 16, 32, 64, 128]:
     print("Timing num_edge_types=", str(num_edge_types) + str('...'))
     data = get_fresh_data(num_edge_types)
-    print('Timing cpu...')
-    avg_fwd, avg_bwd = train(data)
-    fwd_times['cpu'].append(avg_fwd)
-    bwd_times['cpu'].append(avg_bwd)
-    data = get_fresh_data(num_edge_types)
     print('Timing vanilla gpu...')
     avg_fwd, avg_bwd = train(data, device='cuda')
     fwd_times['gpu'].append(avg_fwd)
@@ -268,6 +263,12 @@ for num_edge_types in [4, 8, 16, 32, 64, 128]:
     avg_fwd, avg_bwd = train(data, device='cuda', lib=True)
     fwd_times['pyg_lib'].append(avg_fwd)
     bwd_times['pyg_lib'].append(avg_bwd)
+    data = get_fresh_data(num_edge_types)
+    print('Timing cpu...')
+    avg_fwd, avg_bwd = train(data)
+    fwd_times['cpu'].append(avg_fwd)
+    bwd_times['cpu'].append(avg_bwd)
+
 
 print("Forward Times:", fwd_times)
 print("Backward Times:", bwd_times)
