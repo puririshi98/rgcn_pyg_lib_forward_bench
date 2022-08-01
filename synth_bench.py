@@ -235,11 +235,11 @@ def train(data, device='cpu', lib=False):
         increment_dict = {}
         ctr = 0
         print(num_node_dict)
-        print(increment_dict)
         for node_type in num_node_dict:
             increment_dict[node_type] = ctr
             ctr += num_node_dict[node_type]
         e_idx_dict = batch.collect('edge_index')
+        print(increment_dict)
         print(e_idx_dict)
         etypes_list = []
         for i, e_type in enumerate(e_idx_dict.keys()):
