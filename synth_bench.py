@@ -18,7 +18,7 @@ from torch_geometric.loader import NeighborLoader
 import random
 from itertools import product
 from typing import Callable, Optional
-
+import math
 import torch
 
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
