@@ -211,7 +211,7 @@ def fuse_data(batch, device):
 def train(data, device='cpu', lib=False):
     torch.cuda.empty_cache()
     data = data.to(device)
-    n_classes = int(math.ceil(torch.numel(torch.unique(data['v0'].y)) / 4.0) * 4.0)
+    n_classes = torch.numel(torch.unique(data['v0'].y))
     class Net(torch.nn.Module):
         def __init__(self, lib):
             super().__init__()
