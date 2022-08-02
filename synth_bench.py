@@ -236,13 +236,13 @@ def train(data, device='cpu', lib=False):
         out = model(x, edge_index, edge_type)
         if i>=4:
             forward_sumtime += time.time() - since
-        target = data['v0'].y
-        loss = criterion(out[:target.shape[0]], target)
-        if i>=4: # warmup
-            since=time.time()
-        loss.backward()
-        if i>=4:
-            sumtime += time.time() - since
+        # target = data['v0'].y
+        # loss = criterion(out[:target.shape[0]], target)
+        # if i>=4: # warmup
+        #     since=time.time()
+        # loss.backward()
+        # if i>=4:
+        #     sumtime += time.time() - since
     return forward_sumtime/95.0, sumtime/95.0
 
 def get_fresh_data(num_edge_types):
