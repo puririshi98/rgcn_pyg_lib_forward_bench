@@ -13,7 +13,6 @@ import torch.nn.functional as F
 import torch.optim as opt
 import torch_geometric
 import torch_geometric.transforms as T
-from ogb.nodeproppred import NodePropPredDataset
 from torch_geometric.loader import NeighborLoader
 import random
 from itertools import product
