@@ -253,6 +253,7 @@ bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 for num_edge_types in [4, 8, 16, 32, 64, 128]:
     print("Timing num_edge_types=", str(num_edge_types) + str('...'))
     data = get_fresh_data(num_edge_types)
+    print(data)
     print('Timing pyg_lib...')
     avg_fwd, avg_bwd = train(data, device='cuda', lib=True)
     print("Fwd time=", avg_fwd)
