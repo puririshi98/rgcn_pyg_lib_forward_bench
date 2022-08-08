@@ -755,6 +755,5 @@ for i, batch in enumerate(data_object.train_dataloader):
         print('model.conv1.weight.grad.shape =', model.conv1.weight.grad.shape)
     if i==99:
         break
-print('Average forward pass time:', forward_sumtime/95.0)
-print('Average backward pass time:', sumtime/95.0)
+print('Average forward +backward pass time:', (forward_sumtime + sumtime)/95.0)
 torch.cuda.empty_cache()

@@ -248,36 +248,28 @@ def get_fresh_data(num_edge_types):
     torch_geometric.seed_everything(42)
     return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types).data
 
-fwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
-bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
+fwd_p_bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 for num_edge_types in [4, 8, 16, 32, 64, 128]:
     print("Timing num_edge_types=", str(num_edge_types) + str('...'))
     data = get_fresh_data(num_edge_types)
     print(data)
     print('Timing pyg_lib...')
     avg_fwd, avg_bwd = train(data, device='cuda', lib=True)
-    print("Fwd time=", avg_fwd)
-    print("Bwd time=", avg_bwd)
-    fwd_times['pyg_lib'].append(avg_fwd)
-    bwd_times['pyg_lib'].append(avg_bwd)
+    print("Fwd+bwd time=", avg_fwd+avg_bwd)
+    fwd_p_bwd_times['pyg_lib'].append(avg_fwd+avg_bwd)
     data = get_fresh_data(num_edge_types)
     print('Timing vanilla gpu...')
     avg_fwd, avg_bwd = train(data, device='cuda')
-    print("Fwd time=", avg_fwd)
-    print("Bwd time=", avg_bwd)
-    fwd_times['gpu'].append(avg_fwd)
-    bwd_times['gpu'].append(avg_bwd)
+    print("Fwd+bwd time=", avg_fwd+avg_bwd)
+    fwd_p_bwd_times['gpu'].append(avg_fwd+avg_bwd)
     data = get_fresh_data(num_edge_types)
     print('Timing cpu...')
     avg_fwd, avg_bwd = train(data)
-    print("Fwd time=", avg_fwd)
-    print("Bwd time=", avg_bwd)
-    fwd_times['cpu'].append(avg_fwd)
-    bwd_times['cpu'].append(avg_bwd)
+    print("Fwd+bwd time=", avg_fwd+avg_bwd)
+    fwd_p_bwd_times['cpu'].append(avg_fwd+avg_bwd)
 
 
-print("Forward Times:", fwd_times)
-print("Backward Times:", bwd_times)
+print("Forward plus Backward Times:", fwd_p_bwd_times)
 
 
 
