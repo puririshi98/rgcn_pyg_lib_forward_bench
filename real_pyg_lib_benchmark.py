@@ -739,21 +739,21 @@ criterion = torch.nn.CrossEntropyLoss()
 forward_sumtime = 0
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type = fuse_batch(batch)
-    if i>=4:
-        since=time.time()
     out = model(x, edge_index, edge_type)
     if i>=4:
         forward_sumtime += time.time() - since
     target = batch['paper'].y[:1024]
     loss = criterion(out[:1024], target)
-    if i>=4: # warmup
-        since=time.time()
     loss.backward()
-    if i>=4:
-        sumtime += time.time() - since
+    
     if i==0:
         print('model.conv1.weight.grad.shape =', model.conv1.weight.grad.shape)
-    if i==99:
+    
+    if i>=5:
+        sumtime += time.time() - since
+    if i>=99:
         break
-print('Average forward +backward pass time:', (forward_sumtime + sumtime)/95.0)
+    if i>=4:
+        since=time.time()
+print('Average Full Iter Time:', (sumtime)/95.0)
 torch.cuda.empty_cache()
