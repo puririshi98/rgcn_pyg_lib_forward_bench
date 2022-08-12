@@ -101,8 +101,8 @@ class Net(torch.nn.Module):
         x = F.relu(x)
         x = self.l2(x, edge_index, edge_type)
         return x
-lib = bool(int(sys.argv[2]))
-model = Net(lib).to(sys.argv[1])
+lib = True
+model = Net(lib).to('cuda')
 
 import time
 sumtime = 0
@@ -125,7 +125,7 @@ def fuse_batch(batch):
             e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
             e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
             etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-    edge_types = torch.cat(etypes_list).to(torch.long).to(sys.argv[1])
+    edge_types = torch.cat(etypes_list).to(torch.long).to('cuda')
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
     return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()
