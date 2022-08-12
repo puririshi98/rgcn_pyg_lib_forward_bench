@@ -1,3 +1,4 @@
+print("import time")
 import enum
 import json
 import os
@@ -19,7 +20,7 @@ import torch_geometric.transforms as T
 from ogb.nodeproppred import NodePropPredDataset
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import NeighborLoader
-
+print("done imports")
 #define rgcn
 class StrEnum(str, enum.Enum):
     def __new__(cls, *args):
