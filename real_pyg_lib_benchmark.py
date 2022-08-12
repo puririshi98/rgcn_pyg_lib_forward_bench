@@ -1,4 +1,5 @@
 print("import time")
+print("import enum")
 import enum
 import json
 import os
@@ -7,18 +8,27 @@ import re
 import shutil
 import time
 import sys
+print("from collections import defaultdict")
 from collections import defaultdict
+print("from typing import Optional")
 from typing import Optional
+print("import numpy as np")
 import numpy as np
+print("import pandas as pd")
 import pandas as pd
+print("import torch")
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as opt
+print("import torch_geometric")
 import torch_geometric
 import torch_geometric.transforms as T
+print("from ogb.nodeproppred import NodePropPredDataset")
 from ogb.nodeproppred import NodePropPredDataset
+print("from torch_geometric.data import HeteroData")
 from torch_geometric.data import HeteroData
+print("from torch_geometric.loader import NeighborLoader")
 from torch_geometric.loader import NeighborLoader
 print("done imports")
 #define rgcn
