@@ -129,7 +129,10 @@ def fuse_batch(batch):
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
     return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()
+load_sum = 0
 for i, batch in enumerate(loader):
+    if i>=5:
+        load_sum += time.time() - since
     x, edge_index, edge_type = fuse_batch(batch)
     out = model(x, edge_index, edge_type)
     target = batch['paper'].y[:1024]
@@ -143,5 +146,6 @@ for i, batch in enumerate(loader):
     if i>=4:
         since=time.time()
 print('Average Full Iter Time:', (sumtime)/95.0)
+print("average data loading time:", load_sum/95.0)
 torch.cuda.empty_cache()
 
