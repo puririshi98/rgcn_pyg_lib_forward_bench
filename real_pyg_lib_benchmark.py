@@ -687,15 +687,16 @@ from custom_rgcnconv_2 import RGCNConv
 torch.cuda.empty_cache()
 source_path = os.path.join(DATA_DIR, "ogbn/mag/")
 destination_path = os.path.join(DATA_DIR, "ogbn/mag/GP_Transformed/")
-
+print("preprocessing...")
 if not os.path.exists(destination_path):
     prep = OGBN_MAG(source_path, destination_path)
     prep.transform()
-
+print("making dataloader obj")
 data_object = NodeDataObject(
     data_path=destination_path,
 )
 data_object.build_train_dataloader_post_dist(sys.argv[1])
+print('defining model')
 data = data_object.graph
 n_classes = torch.numel(torch.unique(data['paper'].y))
 class Net(torch.nn.Module):
@@ -713,7 +714,7 @@ lib = bool(int(sys.argv[2]))
 model = Net(lib).to(sys.argv[1])
 import time
 sumtime = 0
-
+print("running loop")
 def fuse_batch(batch):
     x_dict = batch.collect('x')
     x = torch.cat(list(x_dict.values()), dim=0)
