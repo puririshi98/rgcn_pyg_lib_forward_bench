@@ -749,7 +749,6 @@ def fuse_batch(batch):
     return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()
 for i, batch in enumerate(data_object.train_dataloader):
-    print(i)
     x, edge_index, edge_type = fuse_batch(batch)
     out = model(x, edge_index, edge_type)
     target = batch['paper'].y[:1024]
