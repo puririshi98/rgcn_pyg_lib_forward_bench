@@ -74,8 +74,8 @@ loader = CuGraphLinkNeighborLoader(
     data=(feature_store, graph_store),
     edge_label_index='writes',
     shuffle=True,
-    num_neighbors=[10,25],
-    batch_size=50,
+    num_neighbors=[50,50],
+    batch_size=1024,
 )
 
 edge_types = [attr.edge_type for attr in graph_store.get_all_edge_attrs()]
