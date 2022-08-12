@@ -736,12 +736,9 @@ def fuse_batch(batch):
     eidx = torch.cat(list(e_idx_dict.values()), dim=1)
     return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()
-forward_sumtime = 0
 for i, batch in enumerate(data_object.train_dataloader):
     x, edge_index, edge_type = fuse_batch(batch)
     out = model(x, edge_index, edge_type)
-    if i>=4:
-        forward_sumtime += time.time() - since
     target = batch['paper'].y[:1024]
     loss = criterion(out[:1024], target)
     loss.backward()
