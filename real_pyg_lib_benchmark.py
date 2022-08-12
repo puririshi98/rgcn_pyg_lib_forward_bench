@@ -737,15 +737,12 @@ def fuse_batch(batch):
     return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()
 for i, batch in enumerate(data_object.train_dataloader):
+    print(i)
     x, edge_index, edge_type = fuse_batch(batch)
     out = model(x, edge_index, edge_type)
     target = batch['paper'].y[:1024]
     loss = criterion(out[:1024], target)
     loss.backward()
-    
-    if i==0:
-        print('model.conv1.weight.grad.shape =', model.conv1.weight.grad.shape)
-    
     if i>=5:
         sumtime += time.time() - since
     if i>=99:
