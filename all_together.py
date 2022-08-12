@@ -130,7 +130,7 @@ def fuse_batch(batch):
     return x, eidx, edge_types
 criterion = torch.nn.CrossEntropyLoss()
 forward_sumtime = 0
-for i, batch in enumerate(data_object.train_dataloader):
+for i, batch in enumerate(loader):
     x, edge_index, edge_type = fuse_batch(batch)
     out = model(x, edge_index, edge_type)
     if i>=4:
