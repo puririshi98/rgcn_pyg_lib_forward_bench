@@ -186,7 +186,7 @@ from pyg_lib_heterolinear import HeteroLinear
 def fuse_data(batch, device):
     x_dict = batch.collect('x')
     x = torch.cat(list(x_dict.values()), dim=0)
-    for node_type in num_node_dict:
+    for node_type in x_dict.keys():
         ntypes_list.append(torch.ones(x_dict[node_type].shape[0]) * i)
     return x.to(device), torch.cat(ntypes_list).to(device)
 
