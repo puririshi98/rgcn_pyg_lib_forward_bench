@@ -189,7 +189,7 @@ class HeteroLinear(torch.nn.Module):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
+        self._WITH_PYG_LIB = lib
         self.is_sorted = is_sorted
         self.lins = torch.nn.ModuleList([
             Linear(in_channels, out_channels, **kwargs)
