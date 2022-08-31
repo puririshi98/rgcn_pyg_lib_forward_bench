@@ -186,41 +186,29 @@ from pyg_lib_heterolinear import HeteroLinear
 def fuse_data(batch, device):
     x_dict = batch.collect('x')
     x = torch.cat(list(x_dict.values()), dim=0)
-    num_node_dict = batch.collect('num_nodes')
-    increment_dict = {}
-    ctr = 0
     for node_type in num_node_dict:
-        increment_dict[node_type] = ctr
-        ctr += num_node_dict[node_type]
-    e_idx_dict = batch.collect('edge_index')
-    etypes_list = []
-    for i, e_type in enumerate(e_idx_dict.keys()):
-        src_type, dst_type = e_type[0], e_type[-1]
-        if torch.numel(e_idx_dict[e_type]) != 0:
-            e_idx_dict[e_type][0, :] = e_idx_dict[e_type][0, :] + increment_dict[src_type]
-            e_idx_dict[e_type][1, :] = e_idx_dict[e_type][1, :] + increment_dict[dst_type]
-            etypes_list.append(torch.ones(e_idx_dict[e_type].shape[-1]) * i)
-    edge_types = torch.cat(etypes_list).to(torch.long).to(device)
-    eidx = torch.cat(list(e_idx_dict.values()), dim=1)
-    x, eidx, edge_types = x.to(device), eidx.to(device), edge_types.to(device)
-    return x, eidx, edge_types
+        ntypes_list.append(torch.ones(x_dict[node_type].shape[0]) * i)
+    return x.to(device), torch.cat(ntypes_list).to(device)
 
+def get_fresh_data(num_node_types):
+    torch_geometric.seed_everything(42)
+    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=num_node_types, num_edge_types=128).data
 
-def train(data, device='cpu', lib=False):
+def train(num_node_types, device='cpu', lib=False):
     torch.cuda.empty_cache()
-    data = data.to(device)
+    data = get_fresh_data(num_node_types).to(device)
     n_classes = torch.numel(torch.unique(data['v0'].y))
-    model = HeteroLinear()
+    model = HeteroLinear(128, n_classes, num_node_types, is_sorted=True, lib=lib)
     sumtime = 0
 
 
     criterion = torch.nn.CrossEntropyLoss()
     forward_sumtime = 0
-    x, edge_index, edge_type = fuse_data(data, device)
+    x, type_vec = fuse_data(data, device)
     for i in range(100):
         if i>=4:
             since=time.time()
-        out = model(x, edge_index, edge_type)
+        out = model(x, type_vec)
         if i>=4:
             forward_sumtime += time.time() - since
         target = data['v0'].y
@@ -232,27 +220,19 @@ def train(data, device='cpu', lib=False):
             sumtime += time.time() - since
     return forward_sumtime/95.0, sumtime/95.0
 
-def get_fresh_data(num_edge_types):
-    torch_geometric.seed_everything(42)
-    return FakeHeteroDataset(avg_num_nodes=20000, num_node_types=4, num_edge_types=num_edge_types).data
-
 fwd_p_bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
-for num_edge_types in [4, 8, 16, 32, 64, 128]:
-    print("Timing num_edge_types=", str(num_edge_types) + str('...'))
-    data = get_fresh_data(num_edge_types)
-    print(data)
+for num_node_types in [4, 8, 16, 32, 64, 128]:
+    print("Timing num_node_types=", str(num_node_types) + str('...'))
     print('Timing pyg_lib...')
-    avg_fwd, avg_bwd = train(data, device='cuda', lib=True)
+    avg_fwd, avg_bwd = train(num_node_types, device='cuda', lib=True)
     print("Fwd+bwd time=", avg_fwd+avg_bwd)
     fwd_p_bwd_times['pyg_lib'].append(avg_fwd+avg_bwd)
-    data = get_fresh_data(num_edge_types)
     print('Timing vanilla gpu...')
-    avg_fwd, avg_bwd = train(data, device='cuda')
+    avg_fwd, avg_bwd = train(num_node_types, device='cuda')
     print("Fwd+bwd time=", avg_fwd+avg_bwd)
     fwd_p_bwd_times['gpu'].append(avg_fwd+avg_bwd)
-    data = get_fresh_data(num_edge_types)
     print('Timing cpu...')
-    avg_fwd, avg_bwd = train(data)
+    avg_fwd, avg_bwd = train(num_node_types)
     print("Fwd+bwd time=", avg_fwd+avg_bwd)
     fwd_p_bwd_times['cpu'].append(avg_fwd+avg_bwd)
 

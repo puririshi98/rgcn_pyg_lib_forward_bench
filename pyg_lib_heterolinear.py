@@ -183,7 +183,7 @@ class HeteroLinear(torch.nn.Module):
         - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
-                 is_sorted: Optional[bool] = False,
+                 is_sorted: Optional[bool] = False, lib: Optional[bool]=False, 
                  **kwargs):
         super().__init__()
 
@@ -217,7 +217,7 @@ class HeteroLinear(torch.nn.Module):
                     type_vec, perm = type_vec.sort()
                     x = x[:, perm]
             edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
-                    type_vec, len(self.lins))
+                type_vec, len(self.lins))
             out = segment_matmul(x, edge_type_ptr, self.weights) + self.biases
         else:
             out = x.new_empty(x.size(0), self.out_channels)
