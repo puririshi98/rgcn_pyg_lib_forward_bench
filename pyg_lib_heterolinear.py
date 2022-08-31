@@ -224,7 +224,9 @@ class HeteroLinear(torch.nn.Module):
             print(edge_type_ptr.shape)
             print(self.weights.shape)
             print(self.biases.shape)
-            out = segment_matmul(x, edge_type_ptr, self.weights) + self.biases
+            out = segment_matmul(x, edge_type_ptr, self.weights)
+            print(out.shape)
+            out += self.biases
         else:
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
