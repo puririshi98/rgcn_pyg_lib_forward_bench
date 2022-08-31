@@ -189,7 +189,7 @@ def fuse_data(batch, device):
     type_vec_list = []
     for i, node_type in enumerate(x_dict.keys()):
         type_vec_list.append(torch.ones(x_dict[node_type].shape[0]) * i)
-    return x.to(device), torch.cat(type_vec_list).to(device)
+    return x.to(device), torch.cat(type_vec_list).to(device).to(torch.long)
 
 def get_fresh_data(num_node_types):
     torch_geometric.seed_everything(42)
