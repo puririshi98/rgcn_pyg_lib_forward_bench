@@ -199,7 +199,7 @@ def train(num_node_types, device='cpu', lib=False):
     torch.cuda.empty_cache()
     data = get_fresh_data(num_node_types).to(device)
     n_classes = torch.numel(torch.unique(data['v0'].y))
-    model = HeteroLinear(128, n_classes, num_node_types, is_sorted=True, lib=lib)
+    model = HeteroLinear(128, n_classes, num_node_types, is_sorted=True, lib=lib).to(device)
     sumtime = 0
 
 
