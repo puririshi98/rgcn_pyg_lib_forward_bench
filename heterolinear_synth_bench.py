@@ -187,7 +187,7 @@ def fuse_data(batch, device):
     x_dict = batch.collect('x')
     x = torch.cat(list(x_dict.values()), dim=0)
     type_vec_list = []
-    for node_type in x_dict.keys():
+    for i, node_type in enumerate(x_dict.keys()):
         type_vec_list.append(torch.ones(x_dict[node_type].shape[0]) * i)
     return x.to(device), torch.cat(type_vec_list).to(device)
 
