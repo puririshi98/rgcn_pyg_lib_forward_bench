@@ -198,8 +198,8 @@ class HeteroLinear(torch.nn.Module):
 
         self.reset_parameters()
         if self._WITH_PYG_LIB:
-            self.weights = torch.stack([lin.weight for lin in self.lins])
-            self.biases = torch.stack([lin.bias for lin in self.lins])
+            self.weights = torch.nn.Parameter(torch.torch.stack([lin.weight for lin in self.lins]))
+            self.biases = torch.nn.Parameter(torch.stack([lin.bias for lin in self.lins]))
 
     def reset_parameters(self):
         for lin in self.lins:
