@@ -222,7 +222,7 @@ def train(num_node_types, device='cpu', lib=False):
     return forward_sumtime/95.0, sumtime/95.0
 
 fwd_p_bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
-for num_node_types in [4, 8, 16, 32, 64, 128]:
+for num_node_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     print("Timing num_node_types=", str(num_node_types) + str('...'))
     print('Timing pyg_lib...')
     avg_fwd, avg_bwd = train(num_node_types, device='cuda', lib=True)
