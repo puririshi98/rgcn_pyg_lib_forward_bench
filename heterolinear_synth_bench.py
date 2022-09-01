@@ -223,19 +223,24 @@ def train(num_node_types, device='cpu', lib=False):
 
 fwd_p_bwd_times = {'cpu':[], 'gpu':[], 'pyg_lib':[]}
 for num_node_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
-    print("Timing num_node_types=", str(num_node_types) + str('...'))
-    print('Timing pyg_lib...')
-    avg_fwd, avg_bwd = train(num_node_types, device='cuda', lib=True)
-    print("Fwd+bwd time=", avg_fwd+avg_bwd)
-    fwd_p_bwd_times['pyg_lib'].append(avg_fwd+avg_bwd)
-    print('Timing vanilla gpu...')
-    avg_fwd, avg_bwd = train(num_node_types, device='cuda')
-    print("Fwd+bwd time=", avg_fwd+avg_bwd)
-    fwd_p_bwd_times['gpu'].append(avg_fwd+avg_bwd)
-    print('Timing cpu...')
-    avg_fwd, avg_bwd = train(num_node_types)
-    print("Fwd+bwd time=", avg_fwd+avg_bwd)
-    fwd_p_bwd_times['cpu'].append(avg_fwd+avg_bwd)
+    try:
+        print("Timing num_node_types=", str(num_node_types) + str('...'))
+        print('Timing pyg_lib...')
+        avg_fwd, avg_bwd = train(num_node_types, device='cuda', lib=True)
+        print("Fwd+bwd time=", avg_fwd+avg_bwd)
+        fwd_p_bwd_times['pyg_lib'].append(avg_fwd+avg_bwd)
+        print('Timing vanilla gpu...')
+        avg_fwd, avg_bwd = train(num_node_types, device='cuda')
+        print("Fwd+bwd time=", avg_fwd+avg_bwd)
+        fwd_p_bwd_times['gpu'].append(avg_fwd+avg_bwd)
+        print('Timing cpu...')
+        avg_fwd, avg_bwd = train(num_node_types)
+        print("Fwd+bwd time=", avg_fwd+avg_bwd)
+        fwd_p_bwd_times['cpu'].append(avg_fwd+avg_bwd)
+    except:
+        print("Forward plus Backward Times:", fwd_p_bwd_times)
+        quit()
+
 
 
 print("Forward plus Backward Times:", fwd_p_bwd_times)
