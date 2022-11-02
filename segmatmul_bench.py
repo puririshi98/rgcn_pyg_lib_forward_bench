@@ -1,7 +1,7 @@
 import torch
 import pyg_lib
 import time
-
+os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
 times = []
 num_nodes_per_type = 10000
 n_feats = 128
