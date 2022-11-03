@@ -11,7 +11,7 @@ out_feats = 64
 
 for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     inputs = torch.randn((num_nodes_per_type * num_types, n_feats)).cuda()
-    ptr = torch.tensor(list(range(0, (num_types + 1) * num_nodes_per_type, num_nodes_per_type))).cuda()
+    ptr = torch.tensor(list(range(0, (num_types + 1) * num_nodes_per_type, num_nodes_per_type))).cpu()
     other = torch.randn((num_types, n_feats, out_feats), requires_grad=True).cuda()
     
     for i in range(60):
