@@ -34,7 +34,7 @@ def run(rank, world_size, dataset):
         model.train()
 
         for batch in train_loader:
-            e_idx = data.edge_index.to(rank)
+            e_idx = batch.edge_index.to(rank)
             x = batch.x.to(rank)
             etype = torch.zeros(e_idx.shape[-1]).to(rank)
             out = model(x, e_idx.long(), etype.long())
