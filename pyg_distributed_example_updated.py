@@ -8,7 +8,7 @@ from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
 from torch_geometric.datasets import Reddit
-from torch_geometric.sampler import NeighborSampler
+from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import RGCNConv
 
 
@@ -21,7 +21,7 @@ def run(rank, world_size, dataset):
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
     train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
 
-    train_loader = (NeighborSampler(data, num_neighbors=[25, 10]))
+    train_loader = (LinkNeighborLoader(data, num_neighbors=[25, 10], batch_size=128))
 
 
     torch.manual_seed(12345)
@@ -29,17 +29,15 @@ def run(rank, world_size, dataset):
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-    x, y = data.x.to(rank), data.y.to(rank)
 
     for epoch in range(1, 21):
         model.train()
 
-        for i in range(10):
-            samp = train_loader._sample(torch.tensor([i]))
-            e_idx = torch.cat((samp.row.reshape(1, -1), samp.col.reshape(1, -1)))
-
-            optimizer.zero_grad()
-            out = model(x, e_idx.long(), torch.zeros(e_idx.shape[-1]).long())
+        for batch in train_loader:
+            e_idx = data.edge_index.to(rank)
+            x = batch.x.to(rank)
+            etype = torch.zeros(e_idx.shape[-1]).to(rank)
+            out = model(x, e_idx.long(), etype.long())
 
         dist.barrier()
         if rank == 0:
