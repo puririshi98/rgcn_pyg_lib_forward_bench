@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
-from torch_geometric.datasets import Reddit
+from torch_geometric.datasets import FakeDataset
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import RGCNConv
 
@@ -18,8 +18,6 @@ def run(rank, world_size, dataset):
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
     data = dataset[0]
-    train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
 
     train_loader = (LinkNeighborLoader(data, num_neighbors=[25, 10], batch_size=128))
 
@@ -51,7 +49,7 @@ def run(rank, world_size, dataset):
 
 
 if __name__ == '__main__':
-    dataset = Reddit('../../data/Reddit')
+    dataset = FakeDataset()
 
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
