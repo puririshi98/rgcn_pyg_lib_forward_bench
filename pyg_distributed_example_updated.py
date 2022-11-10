@@ -36,8 +36,6 @@ def run(rank, world_size, dataset):
             x = batch.x.to(rank)
             etype = torch.zeros(e_idx.shape[-1]).to(rank)
             out = model(x, e_idx.long(), etype.long())
-        if rank==0:
-            print("finished step", i)
         dist.barrier()
         if rank == 0:
             print('finished epoch', epoch)
