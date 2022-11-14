@@ -8,7 +8,7 @@ from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
 from torch_geometric.datasets import FakeHeteroDataset
-from torch_geometric.loader import LinkNeighborLoader
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import RGCNConv
 
 
