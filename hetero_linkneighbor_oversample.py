@@ -32,7 +32,7 @@ def run(rank, world_size, dataset):
         batch.to(device)
         batch_e_dim = batch[('v0', 'e0', 'v0')].edge_index.shape[1]
         fullgraph_e_dim = batch[('v0', 'e0', 'v0')].edge_index.shape[1]
-        assert batch_e_dim < fullgraph_e_dim, 'batch is bigger than full graph: ' + str((batch_e_dim)) ' > ' + str(fullgraph_e_dim)
+        assert batch_e_dim < fullgraph_e_dim, 'batch is bigger than full graph: ' + str((batch_e_dim)) + ' > ' + str(fullgraph_e_dim)
 
 
 
