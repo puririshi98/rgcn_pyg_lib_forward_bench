@@ -42,7 +42,7 @@ def run(rank, world_size, dataset):
 
 
 if __name__ == '__main__':
-    dataset = FakeHeteroDataset(avg_num_nodes)
+    dataset = FakeHeteroDataset(avg_num_nodes=50000)
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
     mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
