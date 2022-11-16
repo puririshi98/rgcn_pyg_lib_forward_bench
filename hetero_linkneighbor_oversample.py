@@ -28,9 +28,10 @@ def run(rank, world_size, dataset):
         if rank == 0:
             print('Minibatch:', batch)
         batch.to('cuda:'+str(rank))
-        batch_e_dim = batch[e1].edge_index.shape[1]
-        fullgraph_e_dim = batch[e1].edge_index.shape[1]
-        assert batch_e_dim < fullgraph_e_dim, 'batch is bigger than full graph: ' + str((batch_e_dim)) + ' > ' + str(fullgraph_e_dim)
+        for etype in data.edge_types:
+            batch_e_dim = batch[etype].edge_index.shape[1]
+            fullgraph_e_dim = data[etype].edge_index.shape[1]
+            assert batch_e_dim < fullgraph_e_dim, 'batch is bigger than full graph: ' + str((batch_e_dim)) + ' > ' + str(fullgraph_e_dim)
 
 
 
