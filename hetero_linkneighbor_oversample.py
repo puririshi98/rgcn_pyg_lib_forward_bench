@@ -10,6 +10,7 @@ from tqdm import tqdm
 from torch_geometric.datasets import FakeHeteroDataset
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import RGCNConv
+import torch_geometric
 
 
 def run(rank, world_size, dataset):
