@@ -18,6 +18,7 @@ def run(rank, world_size, dataset):
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
     data = dataset[0]
+    print("Full graph:", data)
 
     e1 = data.edge_types[0]
     train_loader = (LinkNeighborLoader(data, edge_label_index=(e1, (data[e1].edge_index)), num_neighbors=[50, 50], batch_size=1024, num_workers=int(len(os.sched_getaffinity(0)) / 2)))
@@ -28,8 +29,8 @@ def run(rank, world_size, dataset):
 
     for i, batch in enumerate(train_loader):
         if rank == 0:
-            print(batch)
-        batch.to(device)
+            print('Minibatch:', batch)
+        batch.to('cuda:'+str(rank))
         batch_e_dim = batch[('v0', 'e0', 'v0')].edge_index.shape[1]
         fullgraph_e_dim = batch[('v0', 'e0', 'v0')].edge_index.shape[1]
         assert batch_e_dim < fullgraph_e_dim, 'batch is bigger than full graph: ' + str((batch_e_dim)) + ' > ' + str(fullgraph_e_dim)
