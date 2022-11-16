@@ -32,6 +32,7 @@ def run(rank, world_size, dataset):
             batch_e_dim = batch[etype].edge_index.shape[1]
             fullgraph_e_dim = data[etype].edge_index.shape[1]
             assert batch_e_dim < fullgraph_e_dim, 'batch is bigger than full graph: ' + str((batch_e_dim)) + ' > ' + str(fullgraph_e_dim)
+        break
 
 
 
