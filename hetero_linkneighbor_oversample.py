@@ -31,8 +31,8 @@ def run(rank, world_size, dataset):
         if rank == 0:
             print('Minibatch:', batch)
         batch.to('cuda:'+str(rank))
-        batch_e_dim = batch[('v0', 'e0', 'v0')].edge_index.shape[1]
-        fullgraph_e_dim = batch[('v0', 'e0', 'v0')].edge_index.shape[1]
+        batch_e_dim = batch[e1].edge_index.shape[1]
+        fullgraph_e_dim = batch[e1].edge_index.shape[1]
         assert batch_e_dim < fullgraph_e_dim, 'batch is bigger than full graph: ' + str((batch_e_dim)) + ' > ' + str(fullgraph_e_dim)
 
 
@@ -43,6 +43,7 @@ def run(rank, world_size, dataset):
 
 
 if __name__ == '__main__':
+    torch_geometric.seed_everything(42)
     dataset = FakeHeteroDataset(avg_num_nodes=50000)
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
