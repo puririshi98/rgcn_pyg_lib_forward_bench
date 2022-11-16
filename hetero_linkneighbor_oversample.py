@@ -18,7 +18,14 @@ def run(rank, world_size, dataset):
     print("Full graph:", data)
 
     e1 = data.edge_types[0]
-    train_loader = (LinkNeighborLoader(data, edge_label_index=(e1, (data[e1].edge_index)), num_neighbors=[50, 50], batch_size=1024, num_workers=int(len(os.sched_getaffinity(0)) / 2)))
+    train_loader = LinkNeighborLoader(data,
+        edge_label_index=(e1, (data[e1].edge_index)),
+        num_neighbors=[50, 50],
+        batch_size=1024,
+        num_workers=int(len(os.sched_getaffinity(0)) / 2),
+        shuffle=True,
+        replace=True,
+    )
 
 
     torch.manual_seed(12345)
@@ -39,6 +46,7 @@ def run(rank, world_size, dataset):
 
 
     dist.destroy_process_group()
+    print("Test Passed!")
 
 
 if __name__ == '__main__':
