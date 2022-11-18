@@ -4,7 +4,8 @@ from torch_geometric.nn.dense import Linear
 import time
 import os
 os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
-times = []
+dict_times = []
+fused_times = []
 num_nodes_per_type = 10000
 n_feats = 128
 out_feats = 64
@@ -18,11 +19,20 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
         if i==10:
             since=time.time()
         heterolin(x_dict)
-    times.append((time.time()-since)/50.0)
+    dict_times.append((time.time()-since)/50.0)
     print("Avg time for", num_types, '=', times[-1])
+    x = torch.cat(list(x_dict.values()), dim=0)
+    node_type = torch.cat([(j * torch.ones(x_j.shape[0])).long()
+                           for j, x_j in enumerate(x_dict.values())])
+    for i in range(60):
+        if i==10:
+            since=time.time()
+        heterolin(x=x, node_type=node_type)
+    fused_times.append((time.time()-since)/50.0)
 
 
 
 
+print("Dict Times:", dict_times)
+print("Fused Times:", fused_times)
 
-print("Segment Matmul Times:", times)
