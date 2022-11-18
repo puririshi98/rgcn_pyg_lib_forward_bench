@@ -43,7 +43,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512]:
 
 
 
-print("Loop Times:", fused_times)
+print("Loop Times:", loop_times)
 print("Dict Times:", dict_times)
 print("Fused Times:", fused_times)
 
