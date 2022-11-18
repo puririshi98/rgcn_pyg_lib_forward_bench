@@ -14,7 +14,6 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     x_dict = {'v'+str(i):torch.randn((num_nodes_per_type, n_feats)).cuda() for i in range(num_types)}
     metadata= (x_dict.keys(), [])
     heterolin = ToHeteroModule(Linear(n_feats, out_feats), metadata).cuda()
-    print(heterolin.modules())
     for i in range(60):
         if i==10:
             since=time.time()
