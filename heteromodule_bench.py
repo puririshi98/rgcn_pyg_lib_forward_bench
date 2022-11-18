@@ -36,7 +36,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512]:
         if i==10:
             since=time.time()
         for i in range(num_types):
-            lin(x__dict['v'+str(i)])
+            lin(x_dict['v'+str(i)])
     loop_times.append((time.time()-since)/50.0)
     print("Avg time for for-loop", num_types, '=', loop_times[-1])
 
