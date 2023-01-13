@@ -1,12 +1,22 @@
 from torch_geometric.nn.conv import RGCNConv
 from torch_geometric.data import HeteroData
 import time
-data = HeteroData
+data = HeteroData()
+data['n1'] = torch.randn(5000, 64)
+data['n2'] = torch.randn(5000, 64)
+data['n3'] = torch.randn(5000, 64)
+data[('n1','e1','n2'] = torch.randint(5000, size=(2,10000))
+data[('n2','e2','n3'] = torch.randint(5000, size=(2,10000))
+data[('n1','e3','n3'] = torch.randint(5000, size=(2,10000))
+data[('n2','e1_rev','n1'] = torch.randint(5000, size=(2,10000))
+data[('n3','e2_rev','n2'] = torch.randint(5000, size=(2,10000))
+data[('n3','e3_rev','n1'] = torch.randint(5000, size=(2,10000))
+      
 net = RGCNConv(in_channels=64, out_channels=32, num_relations=2)
 x_dict = data.collect('x')
 edge_index_dict = data.collect('edge_index')
 for i in range(60):
   if i > 9:
     since = time.time()
-  net(edge_index_dict)
+  net(x_dict, edge_index_dict)
 print("average fwd pass time:", (time.time()-since)/50.0)
