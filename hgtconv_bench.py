@@ -8,6 +8,6 @@ edge_index_dict = data.collect('edge_index')
 for i in range(60):
   if i > 9:
     since = time.time()
-  net(edge_index_dict)
+  net(x_dict, edge_index_dict)
 print("average fwd pass time:", (time.time()-since)/50.0)
   
