@@ -13,7 +13,7 @@ data[('n2','e1_rev','n1')] = torch.randint(5000, size=(2,10000))
 data[('n3','e2_rev','n2')] = torch.randint(5000, size=(2,10000))
 data[('n3','e3_rev','n1')] = torch.randint(5000, size=(2,10000))
 
-net = RGCNConv(in_channels=64, out_channels=32, num_relations=6)
+net = RGCNConv(in_channels=64, out_channels=32, num_relations=len(data.edge_types))
 data = data.to('cuda').to_homogeneous()
 for i in range(60):
   if i > 9:
