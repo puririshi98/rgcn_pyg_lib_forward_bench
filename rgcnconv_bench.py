@@ -3,9 +3,9 @@ from torch_geometric.data import HeteroData
 import torch
 import time
 data = HeteroData()
-data['n1'] = torch.randn(5000, 64)
-data['n2'] = torch.randn(5000, 64)
-data['n3'] = torch.randn(5000, 64)
+data['n1'].x = torch.randn(5000, 64)
+data['n2'].x = torch.randn(5000, 64)
+data['n3'].x = torch.randn(5000, 64)
 data[('n1','e1','n2')].edge_index = torch.randint(5000, size=(2,10000))
 data[('n2','e2','n3')].edge_index = torch.randint(5000, size=(2,10000))
 data[('n1','e3','n3')].edge_index = torch.randint(5000, size=(2,10000))
