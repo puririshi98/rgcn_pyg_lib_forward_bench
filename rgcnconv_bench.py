@@ -1,5 +1,6 @@
 from torch_geometric.nn.conv import RGCNConv
 from torch_geometric.data import HeteroData
+import torch
 import time
 data = HeteroData()
 data['n1'] = torch.randn(5000, 64)
