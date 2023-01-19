@@ -1,7 +1,7 @@
 from torch_geometric.nn.conv import HGTConv
 from torch_geometric.datasets import FakeHeteroDataset
 import time
-data = FakeHeteroDataset().data.to('cuda')
+data = FakeHeteroDataset(num_node_types=16, num_edge_types=128).data.to('cuda')
 net = HGTConv(-1, 32, data.metadata()).to('cuda')
 x_dict = data.collect('x')
 edge_index_dict = data.collect('edge_index')
