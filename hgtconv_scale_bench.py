@@ -17,5 +17,7 @@ def bench(num_node_types=16, num_edge_types=128):
 fwd_times = {}
 for num_node_types in [2,4,8,16,32,64]:
   for num_edge_types in [4, 8, 16, 32, 64, 128, 256]:
+    if num_edge_types <= num_node_types:
+      continue
     fwd_times[(num_node_types, num_edge_types)] = bench(num_node_types, num_edge_types)
     
