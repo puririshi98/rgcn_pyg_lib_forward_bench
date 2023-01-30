@@ -20,4 +20,5 @@ for num_node_types in [2, 4, 8, 16, 32, 64, 128]:
     if num_edge_types <= num_node_types:
       continue
     fwd_times[(num_node_types, num_edge_types)] = bench(num_node_types, num_edge_types)
+print("fwd_times =", fwd_times)
     
