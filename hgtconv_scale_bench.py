@@ -10,7 +10,7 @@ def bench(num_node_types=16, num_edge_types=128):
     if i > 9:
       since = time.time()
     net(x_dict, edge_index_dict)
-  out_time = float((time.time()-since)/50.0))
+  out_time = float((time.time()-since)/50.0)
   print('fwd pass time for HGT w/ ({:} nodetypes, {:} edgetypes) = {:f}'.format(num_node_types, num_edge_types, out_time)
   return out_time
 
