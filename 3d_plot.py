@@ -21,9 +21,8 @@ ax.legend()
 plt.show()
 
 #animate:
-
-# Make the plot
-for angle in range(0,90,1):
+# slow start
+for i, angle in enumerate(list(range(1,20,1))):
 	fig = plt.figure()
 	ax = fig.add_subplot(projection='3d')
 	ax.scatter(pyg_x, pyg_y, pyg_z, label='pyg_lib fwd pass time')
@@ -32,10 +31,67 @@ for angle in range(0,90,1):
 	ax.set_ylabel('# Edge Types')
 	ax.set_zlabel('Forward Pass Time (s)')
 	ax.legend()
-	ax.view_init(0,angle)
-
-	filename='3dplot/bench_step'+str(angle)+'.png'
-	plt.savefig(filename, dpi=96)
-
+	ax.view_init(30,270.0+angle/4.0)
+	filename='3dplot/bench_step'+'x'*(i)+'.png'
+	plt.savefig(filename)
+count = i
+# fast through midrange
+for i, angle in enumerate(range(275,355,2)):
+	fig = plt.figure()
+	ax = fig.add_subplot(projection='3d')
+	ax.scatter(pyg_x, pyg_y, pyg_z, label='pyg_lib fwd pass time')
+	ax.scatter(vanilla_x, vanilla_y, vanilla_z, label='vanilla fwd pass time')
+	ax.set_xlabel('# Node Types')
+	ax.set_ylabel('# Edge Types')
+	ax.set_zlabel('Forward Pass Time (s)')
+	ax.legend()
+	last_angle = 30.0-i/5.0
+	ax.view_init(last_angle,angle)
+	filename='3dplot/bench_step'+'x'*(count+i)+'.png'
+	plt.savefig(filename)
+count+=i
+# slow endrange
+for i, angle in enumerate(list(range(1,16,1))):
+	fig = plt.figure()
+	ax = fig.add_subplot(projection='3d')
+	ax.scatter(pyg_x, pyg_y, pyg_z, label='pyg_lib fwd pass time')
+	ax.scatter(vanilla_x, vanilla_y, vanilla_z, label='vanilla fwd pass time')
+	ax.set_xlabel('# Node Types')
+	ax.set_ylabel('# Edge Types')
+	ax.set_zlabel('Forward Pass Time (s)')
+	ax.legend()
+	ax.view_init(last_angle, 355+angle/4.0)
+	filename='3dplot/bench_step'+'x'*(count+i)+'.png'
+	plt.savefig(filename)
+count+=i
+#goback
+# slow endrange
+for i, angle in enumerate(list(range(16,1,-1))):
+	fig = plt.figure()
+	ax = fig.add_subplot(projection='3d')
+	ax.scatter(pyg_x, pyg_y, pyg_z, label='pyg_lib fwd pass time')
+	ax.scatter(vanilla_x, vanilla_y, vanilla_z, label='vanilla fwd pass time')
+	ax.set_xlabel('# Node Types')
+	ax.set_ylabel('# Edge Types')
+	ax.set_zlabel('Forward Pass Time (s)')
+	ax.legend()
+	ax.view_init(last_angle, 355+angle/4.0)
+	filename='3dplot/bench_step'+'x'*(count+i)+'.png'
+	plt.savefig(filename)
+# fast back to start
+count+=i
+for i, angle in enumerate(range(355,270,-2)):
+	fig = plt.figure()
+	ax = fig.add_subplot(projection='3d')
+	ax.scatter(pyg_x, pyg_y, pyg_z, label='pyg_lib fwd pass time')
+	ax.scatter(vanilla_x, vanilla_y, vanilla_z, label='vanilla fwd pass time')
+	ax.set_xlabel('# Node Types')
+	ax.set_ylabel('# Edge Types')
+	ax.set_zlabel('Forward Pass Time (s)')
+	ax.legend()
+	new_angle = last_angle + i/5.0
+	ax.view_init(new_angle,angle)
+	filename='3dplot/bench_step'+'x'*(count+i)+'.png'
+	plt.savefig(filename)
 #make gif:
 #rm animated_bench.gif 3dplot/*; vim x; mv x x.py; python3 x.py; /opt/homebrew/Cellar/imagemagick/7.1.0-60/bin/convert -delay 10 3dplot/*.png animated_bench.gif
