@@ -19,3 +19,23 @@ ax.set_ylabel('# Edge Types')
 ax.set_zlabel('Forward Pass Time (s)')
 ax.legend()
 plt.show()
+
+#animate:
+
+# Make the plot
+for angle in range(0,90,1):
+	fig = plt.figure()
+	ax = fig.add_subplot(projection='3d')
+	ax.scatter(pyg_x, pyg_y, pyg_z, label='pyg_lib fwd pass time')
+	ax.scatter(vanilla_x, vanilla_y, vanilla_z, label='vanilla fwd pass time')
+	ax.set_xlabel('# Node Types')
+	ax.set_ylabel('# Edge Types')
+	ax.set_zlabel('Forward Pass Time (s)')
+	ax.legend()
+	ax.view_init(0,angle)
+
+	filename='3dplot/bench_step'+str(angle)+'.png'
+	plt.savefig(filename, dpi=96)
+
+#make gif:
+#rm animated_bench.gif 3dplot/*; vim x; mv x x.py; python3 x.py; /opt/homebrew/Cellar/imagemagick/7.1.0-60/bin/convert -delay 10 3dplot/*.png animated_bench.gif
