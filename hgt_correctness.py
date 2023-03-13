@@ -218,4 +218,5 @@ for og_param, my_param in zip(og_net.parameters(), og_net.parameters()):
 edge_index_dict = data.collect('edge_index')
 our_o = list(pyglib_net(x_dict, edge_index_dict).values())[0]
 og_o = list(og_net(x_dict, edge_index_dict).values())[0]
-assert torch.allclose(our_o, og_o), "max diff = " + str((our_o - og_o).abs().max()) + '\n diff tensor = ' + str((our_o - og_o))
+assert torch.allclose(our_o, og_o), "max diff = " + str((our_o - og_o).abs().max()) + '\n diff tensor = ' + str((our_o - og_o)) + '\n my tensor = ' +str(our_o)+ '\n their tensor = ' +str(og_o)
+
