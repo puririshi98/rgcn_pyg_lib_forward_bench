@@ -196,22 +196,23 @@ class OG_HGTConv(MessagePassing):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(-1, {self.out_channels}, '
                 f'heads={self.heads})')
+seed_everything(420)
 data = HeteroData()
 data['v0'].x = torch.randn(5, 4).cuda()
 data[('v0','e1','v0')].edge_index = torch.randint(high=5, size=(2,10)).cuda()
 seed_everything(420)
-pyglib_net = HGTConv(4, 2, data.metadata()).to('cuda')
+pyglib_net = HGTConv(4, 2, data.metadata(), use_gmm=False).to('cuda')
 seed_everything(420)
 og_net = OG_HGTConv(4, 2, data.metadata()).to('cuda')
 x_dict = data.collect('x')
 # make params match
-for og_param, my_param in zip(og_net.parameters(), og_net.parameters()):
+for og_param, my_param in zip(og_net.parameters(), pyglib_net.parameters()):
   try:
-    my_param.data = torch.zeros_like(my_param.data)
+    my_param.data = torch.ones_like(my_param.data)
   except:
     pass
   try:
-    og_param.data = torch.zeros_like(og_param.data)
+    og_param.data = torch.ones_like(og_param.data)
   except:
     pass
 
@@ -219,4 +220,3 @@ edge_index_dict = data.collect('edge_index')
 our_o = list(pyglib_net(x_dict, edge_index_dict).values())[0]
 og_o = list(og_net(x_dict, edge_index_dict).values())[0]
 assert torch.allclose(our_o, og_o), "max diff = " + str((our_o - og_o).abs().max()) + '\n diff tensor = ' + str((our_o - og_o)) + '\n my tensor = ' +str(our_o)+ '\n their tensor = ' +str(og_o)
-
