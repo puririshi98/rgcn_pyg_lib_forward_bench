@@ -207,11 +207,11 @@ x_dict = data.collect('x')
 # make params match
 for og_param, my_param in zip(og_net.parameters(), og_net.parameters()):
   try:
-    my_param.data = torch.ones_like(my_param.data)
+    my_param.data = torch.zeros_like(my_param.data)
   except:
     pass
   try:
-    og_param.data = torch.ones_like(og_param.data)
+    og_param.data = torch.zeros_like(og_param.data)
   except:
     pass
 
