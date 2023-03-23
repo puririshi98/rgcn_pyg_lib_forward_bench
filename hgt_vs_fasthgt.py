@@ -3,12 +3,14 @@ from torch_geometric.data import HeteroData
 from torch_geometric import seed_everything
 import time
 import math
+import torch
 
 
 
 seed_everything(420)
 data = HeteroData()
 data['v0'].x = torch.randn(5, 4).cuda()
+data['v1'].x = torch.randn(5, 4).cuda()
 data[('v0','e1','v0')].edge_index = torch.randint(high=5, size=(2,10)).cuda()
 seed_everything(420)
 fast_net = FastHGTConv(4, 2, data.metadata()).to('cuda')
