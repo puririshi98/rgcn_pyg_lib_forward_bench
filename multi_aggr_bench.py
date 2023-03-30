@@ -1,7 +1,7 @@
 import torch
 import torch_geometric
 import time
-aggr = torch_geometric.nn.aggr.MultiAggregation(["sum","mean","min","max"], "attn")
+aggr = torch_geometric.nn.aggr.MultiAggregation([torch_geometric.nn.aggr.SumAggregation(),torch_geometric.nn.aggr.MeanAggregation(),torch_geometric.nn.aggr.MinAggregation(),torch_geometric.nn.aggr.MaxAggregation()], "attn")
 x = torch.randn(50,32)
 idx = torch.randint(0,50,size=(2, 100))
 for i in range(60):
