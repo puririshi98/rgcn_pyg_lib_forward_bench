@@ -22,7 +22,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     for i in range(60):
         if i==10:
             since=time.time()
-        heterolin(x=x, node_type=node_type)
+        heterolin(x=x, type_vec=node_type)
     fused_times.append((time.time()-since)/50.0)
     print("Avg time for fuse based", num_types, '=', fused_times[-1])
     for i in range(60):
