@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn.module import ToHeteroLinear
+from torch_geometric.nn.to_hetero_module import ToHeteroLinear
 from torch_geometric.nn.dense import Linear
 import time
 import os
