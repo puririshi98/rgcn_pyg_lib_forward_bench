@@ -1,6 +1,5 @@
 import torch
-from torch_geometric.nn.to_hetero_module import HeteroLinear
-from torch_geometric.nn.dense import Linear
+from torch_geometric.nn.dense import Linear, HeteroLinear
 import time
 import os
 os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
