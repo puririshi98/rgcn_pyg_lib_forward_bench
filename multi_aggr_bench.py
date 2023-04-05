@@ -215,5 +215,5 @@ print("avg time per fwd pass for new=", (time.time()-since)/50.0)
 for i in range(60):
   if i > 9:
     since=time.time()
-  oldaggr(x, idx)
+  old_aggr(x, idx)
 print("avg time per fwd pass for old=", (time.time()-since)/50.0)
