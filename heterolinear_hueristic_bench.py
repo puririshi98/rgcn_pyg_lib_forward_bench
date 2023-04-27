@@ -9,6 +9,7 @@ for num_nodes_per_type in [10**2,10**3,10**4,10**5]:
   for out_feats in [2, 4,8,16,32,64,128,256]:
     for n_feats in [4,8,16,32,64,128,256,512]:
       for num_types in [4, 8, 16, 32, 64, 128, 256, 512]:
+        try:
           print("benchmarking", num_types,"types w/", num_nodes_per_type, "nodes per type and", n_feats, "input features and", out_feats, "outuput feats")
           x_dict = {'v'+str(i):torch.randn((num_nodes_per_type, n_feats)).cuda() for i in range(num_types)}
           x = torch.cat(list(x_dict.values()), dim=0)
@@ -30,6 +31,8 @@ for num_nodes_per_type in [10**2,10**3,10**4,10**5]:
                   lin(x_dict['v'+str(i)])
           loop_times[key] = ((time.time()-since)/50.0)
           print("Avg time for for-loop=", loop_times[key])
+        except:
+          continue
 
 
 
