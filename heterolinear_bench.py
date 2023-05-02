@@ -20,6 +20,10 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     heterolin = HeteroLinear(n_feats, out_feats, len(list(x_dict.keys())), True).cuda()
     for i in range(60):
         if i==10:
+            try:
+                print("heterolin.use_segmm=", heterolin.use_segmm)
+            except:
+                pass
             since=time.time()
         heterolin(x=x, type_vec=node_type)
     fused_times.append((time.time()-since)/50.0)
