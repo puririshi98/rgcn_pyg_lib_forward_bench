@@ -30,7 +30,7 @@ try:
             for i in range(60):
                 if i==10:
                     since=time.time()
-                o = x.new_empty(x.size(0), 64)
+                o = x.new_empty(x.size(0), out_feats)
                 for j in range(num_types):
                     mask = j==node_type
                     o[mask] = lin(x[mask])
