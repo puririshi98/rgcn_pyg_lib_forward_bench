@@ -18,7 +18,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     node_type = torch.cat([(j * torch.ones(x_j.shape[0])).long()
                            for j, x_j in enumerate(x_dict.values())])
     lin = Linear(n_feats, out_feats).cuda()
-    heterolin = to_hetero(lin,(x_dict.keys(), [('v1','e1','v1'])).cuda()
+    heterolin = to_hetero(lin,(x_dict.keys(), [('v1','e1','v1')])).cuda()
     for i in range(60):
         if i==10:
             since=time.time()
