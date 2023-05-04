@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn.to_hetero_module import ToHeteroLinear
+from torch_geometric.nn import to_hetero
 from torch_geometric.nn.dense import Linear
 import time
 import os
@@ -18,7 +18,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     node_type = torch.cat([(j * torch.ones(x_j.shape[0])).long()
                            for j, x_j in enumerate(x_dict.values())])
     lin = Linear(n_feats, out_feats).cuda()
-    heterolin = ToHeteroLinear(lin,x_dict.keys()).cuda()
+    heterolin = to_hetero(lin,(x_dict.keys(), [])).cuda()
     for i in range(60):
         if i==10:
             since=time.time()
