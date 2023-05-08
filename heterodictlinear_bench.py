@@ -33,7 +33,8 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
         for i in range(num_types):
             k = 'v'+str(i)
             os.append(lin(x_dict[k]))
-        sum(os).sum().backward()
+        sum_o = sum(os)
+        sum_o.sum().backward()
     loop_times.append((time.time()-since)/50.0)
     print("Avg time for for-loop", num_types, '=', loop_times[-1])
 
