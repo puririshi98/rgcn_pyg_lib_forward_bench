@@ -4,14 +4,14 @@ from torch_geometric.nn.dense import Linear, HeteroDictLinear
 import time
 import os
 os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
-dict_times = []
-loop_times = []
+dict_times = {}
+loop_times = {}
 num_nodes_per_type = 10000
 n_feats = 128
 out_feats = 64
 
 
-for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
+for num_types in [4, 8, 16, 20, 21, 22, 23, 24, 32, 64, 128, 256, 512, 1024]:
     x_dict = {'v'+str(i):torch.randn((num_nodes_per_type, n_feats)).cuda() for i in range(num_types)}
     metadata= (x_dict.keys(), [])
     x = torch.cat(list(x_dict.values()), dim=0)
@@ -23,7 +23,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
         if i==10:
             since=time.time()
         heterolin(x_dict)
-    dict_times.append((time.time()-since)/50.0)
+    dict_times[num_types] = ((time.time()-since)/50.0)
     print("Avg time for dict based", num_types, '=', dict_times[-1])
     os = []
     for i in range(60):
@@ -32,7 +32,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
         for i in range(num_types):
             k = 'v'+str(i)
             lin(x_dict[k])
-    loop_times.append((time.time()-since)/50.0)
+    loop_times[num_types] = ((time.time()-since)/50.0)
     print("Avg time for for-loop", num_types, '=', loop_times[-1])
 
 
