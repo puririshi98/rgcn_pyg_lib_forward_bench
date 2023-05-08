@@ -11,7 +11,7 @@ n_feats = 128
 out_feats = 64
 
 
-for num_types in [4, 8, 16, 20, 21, 22, 23, 24, 32, 64, 128, 256, 512, 1024]:
+for num_types in [4, 8, 16, 20, 21, 22, 23, 24, 32, 40, 45, 50, 55, 60, 64, 128, 256, 512, 1024]:
     x_dict = {'v'+str(i):torch.randn((num_nodes_per_type, n_feats)).cuda() for i in range(num_types)}
     metadata= (x_dict.keys(), [])
     x = torch.cat(list(x_dict.values()), dim=0)
