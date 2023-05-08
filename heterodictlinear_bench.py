@@ -24,7 +24,7 @@ for num_types in [4, 8, 16, 20, 21, 22, 23, 24, 32, 64, 128, 256, 512, 1024]:
             since=time.time()
         heterolin(x_dict)
     dict_times[num_types] = ((time.time()-since)/50.0)
-    print("Avg time for dict based", num_types, '=', dict_times[-1])
+    print("Avg time for dict based", num_types, '=', dict_times[num_types])
     os = []
     for i in range(60):
         if i==10:
@@ -33,7 +33,7 @@ for num_types in [4, 8, 16, 20, 21, 22, 23, 24, 32, 64, 128, 256, 512, 1024]:
             k = 'v'+str(i)
             lin(x_dict[k])
     loop_times[num_types] = ((time.time()-since)/50.0)
-    print("Avg time for for-loop", num_types, '=', loop_times[-1])
+    print("Avg time for for-loop", num_types, '=', loop_times[num_types])
 
 
 
