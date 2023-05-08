@@ -32,7 +32,8 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
             since=time.time()
         for i in range(num_types):
             k = 'v'+str(i)
-            os.append(lin(x_dict[k]))
+            o = lin(x_dict[k])
+            os.append(o)
         sum_o = sum(os)
         sum_o.sum().backward()
     loop_times.append((time.time()-since)/50.0)
