@@ -22,14 +22,17 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
     for i in range(60):
         if i==10:
             since=time.time()
-        heterolin(x_dict)
+        heterolin(x_dict).sum().backward()
     dict_times.append((time.time()-since)/50.0)
     print("Avg time for dict based", num_types, '=', dict_times[-1])
+    os = []
     for i in range(60):
         if i==10:
             since=time.time()
         for i in range(num_types):
-            lin(x_dict['v'+str(i)])
+            k = 'v'+str(i)
+            os.append(lin(x_dict[k]))
+        sum(os).sum().backward()
     loop_times.append((time.time()-since)/50.0)
     print("Avg time for for-loop", num_types, '=', loop_times[-1])
 
