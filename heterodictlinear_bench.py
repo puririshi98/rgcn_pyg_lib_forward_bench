@@ -25,7 +25,7 @@ for num_types in [4, 8, 16, 32, 64, 128, 256, 512, 1024]:
         odict = heterolin(x_dict)
     dict_times.append((time.time()-since)/50.0)
     print("Avg time for dict based", num_types, '=', dict_times[-1])
-    os
+    os = []
     for i in range(60):
         if i==10:
             since=time.time()
