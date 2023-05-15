@@ -11,7 +11,7 @@ try:
         for n_type in data.node_types:
           max_dim = max(max_dim, data[n_type].x.size(-1))
         for n_type in data.node_types:
-          if data[n_type].x.size(-1)) < max_dim:
+          if data[n_type].x.size(-1) < max_dim:
             data[n_type].x = torch.cat((data[n_type].x, torch.zeros((data[n_type].x.size(0),max_dim - data[n_type].x.size(-1))), dim=-1)
         data = data.to_homogeneous().to('cuda')                           
         net = MFConv(in_channels=data.x.size(-1), out_channels=data.x.size(-1)/2, num_relations=len(data.edge_types)).cuda()
