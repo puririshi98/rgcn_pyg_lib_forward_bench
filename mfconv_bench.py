@@ -18,7 +18,7 @@ for n_per_type in [100,1000,10000, 100000]:
       for i in range(60):
         if i > 9:
           since = time.time()
-        net(data.x, data.edge_index, data.edge_type)
+        net(data.x, data.edge_index)
       times[(n_per_type, n_types)] = (time.time()-since)/50.0                               
       print("average fwd pass time:", times[(n_per_type, n_types)])
 # except:
