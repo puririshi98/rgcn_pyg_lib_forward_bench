@@ -65,3 +65,9 @@ print("scaler mean=", scaler.mean_)
 print("scaler scale=", scaler.scale_)
 print("svm weights=", svm.coef_)
 print("svm bias=", svm.intercept_)
+
+# results on A100 node
+# scaler mean= [  121.30260223 26110.33457249   173.58513011    34.07434944]
+# scaler scale= [  160.97847149 40880.58833801   177.85751054    57.91751964]
+# svm weights= [[0.23544514 0.05888962 0.43131615 0.1394449 ]]
+# svm bias= [-0.34540366]
