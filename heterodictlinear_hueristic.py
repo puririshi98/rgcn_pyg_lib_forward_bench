@@ -29,7 +29,7 @@ try:
                     since=time.time()
                 o = {}
                 for j in range(num_types):
-        node_type = 'v'+str(i)
+                    node_type = 'v'+str(j)
                     o[node_type] = lin(x_dict[node_type])
             loop_times[key] = ((time.time()-since)/50.0)
             print("Avg time for for-loop=", loop_times[key])
