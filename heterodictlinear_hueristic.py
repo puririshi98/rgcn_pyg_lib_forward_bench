@@ -29,7 +29,7 @@ try:
                     since=time.time()
                 o = {}
                 for j in range(num_types):
-		    node_type = 'v'+str(i)
+        node_type = 'v'+str(i)
                     o[node_type] = lin(x_dict[node_type])
             loop_times[key] = ((time.time()-since)/50.0)
             print("Avg time for for-loop=", loop_times[key])
@@ -50,9 +50,9 @@ import numpy as np
 X = np.zeros((len(loop_times), 4))
 y = np.zeros(len(loop_times))
 for i, key in enumerate(loop_times.keys()):
-	X[i, :] = key
-	loop_time, fused_time = loop_times[key], fused_times[key]
-	y[i] = int(fused_time <= loop_time)
+  X[i, :] = key
+  loop_time, fused_time = loop_times[key], fused_times[key]
+  y[i] = int(fused_time <= loop_time)
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC
