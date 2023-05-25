@@ -202,11 +202,11 @@ class OldMultiAggregation(Aggregation):
         return f'{self.__class__.__name__}([\n{aggrs}], mode={self.mode})'
 os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
 
-aggr = torch_geometric.nn.aggr.MultiAggregation([torch_geometric.nn.aggr.SumAggregation()]*512, mode="attn", mode_kwargs={'in_channels':256, 'out_channels':64, 'num_heads':8}).cuda()
-old_aggr = OldMultiAggregation([torch_geometric.nn.aggr.SumAggregation()]*512, mode="attn", mode_kwargs={'in_channels':256, 'out_channels':64, 'num_heads':8}).cuda()
+aggr = torch_geometric.nn.aggr.MultiAggregation([torch_geometric.nn.aggr.SumAggregation()]*1024, mode="attn", mode_kwargs={'in_channels':64, 'out_channels':64, 'num_heads':8}).cuda()
+old_aggr = OldMultiAggregation([torch_geometric.nn.aggr.SumAggregation()]*1024, mode="attn", mode_kwargs={'in_channels':64, 'out_channels':64, 'num_heads':8}).cuda()
 
-x = torch.randn(10000,256).cuda()
-idx = torch.arange(10000).cuda()
+x = torch.randn(1000,64).cuda()
+idx = torch.arange(1000).cuda()
 for i in range(60):
   if i > 9:
     since=time.time()
