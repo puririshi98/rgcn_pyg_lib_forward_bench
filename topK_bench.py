@@ -1,9 +1,7 @@
 from torch_geometric.nn.pool.select.topk import topk
-from torch_geometric.datasets import FakeDataset
 import torch
 import time
 times = {}
-fast_times = {}
 try:
     for num_nodes in [100,1000,10000, 100000]:
         for num_feats in [2,4,8,16,32,64,128,256]:
