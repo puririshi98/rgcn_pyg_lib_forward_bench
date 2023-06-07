@@ -20,7 +20,8 @@ try:
           except:
               continue
     reprint=True
-except:
+except Exception as e:
+    print("failed w/:", e)
     print("times=", times)
     reprint=False
 if reprint:
