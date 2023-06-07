@@ -11,7 +11,7 @@ try:
             try:
                 x = torch.randn((B,N,F,), dtype=torch.float, device='cuda')
                 adj = torch.randint(high=2, size=(B,N,N), dtype=torch.long).cuda()
-                s = torch.randint(high=2, size=(B,N,C), dtype=torch.long).cuda()
+                s = torch.randint(high=2, size=(B,N,C), dtype=torch.float).cuda()
                 for i in range(60):
                   if i > 9:
                     since = time.time()
