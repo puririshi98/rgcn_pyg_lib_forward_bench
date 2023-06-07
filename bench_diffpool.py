@@ -10,8 +10,8 @@ try:
           for C in [2**i for i in range(1,4)]:
             try:
                 x = torch.randn((B,N,F,), dtype=torch.float, device='cuda')
-                adj = torch.randint(high=2, size=(B,N,N), dtype=torch.long).to_sparse_csr().cuda()
-                s = torch.randint(high=2, size=(B,N,C), dtype=torch.long).to_sparse_csr().cuda()
+                adj = torch.randint(high=2, size=(B,N,N), dtype=torch.long).cuda()
+                s = torch.randint(high=2, size=(B,N,C), dtype=torch.long).cuda()
                 for i in range(60):
                   if i > 9:
                     since = time.time()
