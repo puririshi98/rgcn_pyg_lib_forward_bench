@@ -13,7 +13,7 @@ try:
                 topk(x=x, ratio=.5, batch=batch)
               times[x_dim] = (time.time()-since)/50.0 
               print("For", x_dim, "nodes:")
-              print("average topK fwd pass time:", times[(n_per_type, n_types)])
+              print("average topK fwd pass time:", times[x_dim])
           except Exception as e:
               print("iter failed w/ exception", e)
               continue
