@@ -11,10 +11,11 @@ try:
                 if i > 9:
                   since = time.time()
                 topk(x=x, ratio=.5, batch=batch)
-              times[(num_nodes, num_feats)] = (time.time()-since)/50.0 
+              times[x_dim] = (time.time()-since)/50.0 
               print("For", num_nodes, "nodes and", num_feats, "feats:")
               print("average topK fwd pass time:", times[(n_per_type, n_types)])
-          except:
+          except Exception as e:
+              print("iter failed w/ exception", e)
               continue
     reprint=True
 except Exception as e:
