@@ -10,7 +10,7 @@ try:
           for C in [2**i for i in range(1,4)]:
             try:
                 x = torch.randn((B,N,F,), dtype=torch.float, device='cuda')
-                adj = torch.randint(high=2, size=(B,N,N), dtype=torch.long).cuda()
+                adj = torch.randint(high=2, size=(B,N,N), dtype=torch.float).cuda()
                 s = torch.randint(high=2, size=(B,N,C), dtype=torch.float).cuda()
                 for i in range(60):
                   if i > 9:
