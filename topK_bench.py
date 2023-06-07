@@ -1,22 +1,21 @@
 from torch_geometric.nn.pool.select import topk
-from torch_geometric.datasets import FakeHeteroDataset
+from torch_geometric.datasets import FakeDataset
 import torch
 import time
 times = {}
 fast_times = {}
 try:
-    for n_per_type in [100,1000,10000, 100000]:
-        for n_types in [2,4,8,16,32,64,128,256]:
+    for num_nodes in [100,1000,10000, 100000]:
+        for num_feats in [2,4,8,16,32,64,128,256]:
           try:
-              data = FakeHeteroDataset(num_node_types=n_types, num_edge_types=n_types, avg_num_nodes=n_per_type).data
-              data = data.to_homogeneous().to('cuda')
-              x = data.x
+              x = torch.randn((num_nodes, num_feats), dtype=torch.float, device='cuda')
               batch = x.new_zeros(x.size(0), dtype=torch.long)
               for i in range(60):
                 if i > 9:
                   since = time.time()
                 topk(x, batch)
-              times[(n_per_type, n_types)] = (time.time()-since)/50.0                               
+              times[(num_nodes, num_feats)] = (time.time()-since)/50.0 
+              print("For", num_nodes, "nodes and", num_feats, "feats:")
               print("average topK fwd pass time:", times[(n_per_type, n_types)])
           except:
               continue
