@@ -17,8 +17,8 @@ try:
                     since = time.time()
                   dense_diff_pool(x, adj, s)
                 times[(B,N,F,C)] = (time.time()-since)/50.0 
-                print("For", x_dim, "nodes:")
-                print("average topK fwd pass time:", times[(B,N,F,C)])
+                print("With (B,N,F,C)=", (B,N,F,C))
+                print("average topK fwd pass time=", times[(B,N,F,C)])
             except Exception:
                 print(traceback.format_exc())
                 continue
