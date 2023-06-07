@@ -1,6 +1,7 @@
 from torch_geometric.nn.dense import dense_diff_pool
 import torch
 import time
+import traceback
 times = {}
 try:
     for B in [2**i for i in range(1,8)]:
@@ -18,12 +19,12 @@ try:
                 times[(B,N,F,C)] = (time.time()-since)/50.0 
                 print("For", x_dim, "nodes:")
                 print("average topK fwd pass time:", times[(B,N,F,C)])
-            except Exception as e:
-                print("iter failed w/ exception", e)
+            except Exception:
+                print(traceback.format_exc())
                 continue
     reprint=True
-except Exception as e:
-    print("failed w/:", e)
+except Exception:
+    print(traceback.format_exc())
     print("times=", times)
     reprint=False
 if reprint:
