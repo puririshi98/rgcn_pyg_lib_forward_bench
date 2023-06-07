@@ -3,7 +3,7 @@ import torch
 import time
 times = {}
 try:
-    for x_dim in [2**i for i in range(1,32)]:
+    for x_dim in [2**i for i in range(1,20)]:
           try:
               x = torch.randn((x_dim,), dtype=torch.float, device='cuda')
               batch = x.new_zeros(x.size(0), dtype=torch.long)
