@@ -1,4 +1,4 @@
-from torch_geometric.nn.pool.select import topk
+from torch_geometric.nn.pool.select.topk import topk
 from torch_geometric.datasets import FakeDataset
 import torch
 import time
@@ -13,7 +13,7 @@ try:
               for i in range(60):
                 if i > 9:
                   since = time.time()
-                topk(x, batch)
+                topk(x=x, ratio=.5, batch=batch)
               times[(num_nodes, num_feats)] = (time.time()-since)/50.0 
               print("For", num_nodes, "nodes and", num_feats, "feats:")
               print("average topK fwd pass time:", times[(n_per_type, n_types)])
