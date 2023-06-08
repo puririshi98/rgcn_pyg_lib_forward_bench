@@ -1,6 +1,7 @@
 from torch_geometric.nn.pool.select.topk import topk
 import torch
 import time
+import traceback
 times = {}
 try:
     for x_dim in [2**i for i in range(1,20)]:
@@ -15,11 +16,11 @@ try:
               print("For", x_dim, "nodes:")
               print("average topK fwd pass time:", times[x_dim])
           except Exception as e:
-              print("iter failed w/ exception", e)
+              print(traceback.format_exc())
               continue
     reprint=True
 except Exception as e:
-    print("failed w/:", e)
+    print(traceback.format_exc())
     print("times=", times)
     reprint=False
 if reprint:
