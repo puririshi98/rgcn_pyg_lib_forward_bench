@@ -10,6 +10,7 @@ def og_func(index, src, dim):
   return src.new_zeros(size).scatter_add_(dim, index, src)
 
 def new_func(index, src, dim):
+  size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
   return src.new_zeros(size).index_add_(dim, index, src)
 src = torch.randn(size=(100000,128)).to('cuda')
 index = torch.randint(high=src.size(0), size=(100000,)).to('cuda')
