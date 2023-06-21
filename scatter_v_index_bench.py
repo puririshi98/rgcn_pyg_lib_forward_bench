@@ -1,5 +1,9 @@
 import torch
 import time
+def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
+    size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
+    return src.view(size).expand_as(ref)
+
 def og_func(index, src, dim):
   index = broadcast(index, src, dim)
   return src.new_zeros(size).scatter_add_(dim, index, src)
