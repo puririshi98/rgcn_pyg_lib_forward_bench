@@ -4,12 +4,11 @@ import time
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
     return src.view(size).expand_as(ref)
-
+dim = 0
 src = torch.randn(size=(100000,128)).to('cuda')
 index = torch.randint(high=src.size(0), size=(100000,)).to('cuda')
 dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
-dim = 0
 
 def og_func(index, src, dim):
   index = broadcast(index, src, dim)
