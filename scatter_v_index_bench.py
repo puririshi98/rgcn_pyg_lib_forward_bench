@@ -1,4 +1,5 @@
 import torch
+from torch import Tensor
 import time
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
