@@ -21,11 +21,13 @@ for i in range(60):
   if i > 9:
     since = time.time()
   og_func(index, src, dim)
+  torch.cuda.synchronize()
 print("original implementation takes", (time.time()-since)/50, "s/iter")
 for i in range(60):
   if i > 9:
     since = time.time()
   new_func(index, src, dim)
+  torch.cuda.synchronize()
 print("new implementation takes", (time.time()-since)/50, "s/iter")
 
   
