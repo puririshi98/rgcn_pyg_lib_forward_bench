@@ -12,7 +12,6 @@ for num_nodes in [10**i for i in range(2, 10)]:
       {
           "u": data.edge_index[0].reshape(-1).tolist(),
           "v": data.edge_index[1].reshape(-1).tolist(),
-          "attr": torch.arange(data.num_nodes).tolist(),
       }
   )
   del data
