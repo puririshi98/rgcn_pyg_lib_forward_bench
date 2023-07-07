@@ -9,11 +9,12 @@ for num_nodes in [10**i for i in range(10)]:
   
   graph = cudf.DataFrame(
       {
-          "u": data.edge_index[0],
-          "v": data.edge_index[1],
-          "attr": data.x,
+          "u": data.edge_index[0].reshape(-1).tolist(),
+          "v": data.edge_index[1].reshape(-1).tolist(),
+          "attr": data.x.tolist(),
       }
   )
+  del data
   
   nodes_to_keep = cudf.Series([3, 4, 5], name="nodes")
   
