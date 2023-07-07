@@ -3,7 +3,7 @@ import torch_geometric
 # scale up to see when it breaks
 for num_nodes in [10**i for i in range(10)]:
   print("trying w/ num nodes=", num_nodes)
-  data = torch_geometric.data.FakeDataset(avg_num_nodes=num_nodes).data
+  data = torch_geometric.datasets.FakeDataset(avg_num_nodes=num_nodes).data
   
   # edges + attributes
   
