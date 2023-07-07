@@ -11,7 +11,7 @@ for num_nodes in [10**i for i in range(10)]:
       {
           "u": data.edge_index[0],
           "v": data.edge_index[1],
-          "attr": edge_index.x,
+          "attr": data.x,
       }
   )
   
