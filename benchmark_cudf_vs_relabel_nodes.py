@@ -3,8 +3,9 @@ import torch_geometric
 import torch
 import cupy
 # scale up to see when it breaks
-for num_nodes in [10**i for i in range(2, 10)]:
-  print("trying w/ num nodes=", num_nodes)
+for i in range(2, 10):
+  print("trying w/ num nodes = 10^" + str(i))
+  num_nodes = 10**i
   data = torch_geometric.datasets.FakeDataset(avg_num_nodes=num_nodes).data
   
   # edges
