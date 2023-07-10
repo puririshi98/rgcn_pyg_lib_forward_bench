@@ -9,5 +9,5 @@ for i in range(2, 10):
   data = torch_geometric.datasets.FakeDataset(avg_num_nodes=num_nodes).data
   node_idx = torch.zeros(data.x.size(0), dtype=torch.long,
                        device='cuda')
-  node_idx[subset] = torch.arange(3, device=device)
+  node_idx[subset] = torch.arange(3, device='cuda')
   data.edge_index = node_idx[data.edge_index]
