@@ -1,7 +1,7 @@
 import torch_geometric
 import torch
 # scale up to see when it breaks
-subet = torch.tensor([3, 4, 5], device='cuda', dtype=torch.long)
+subset = torch.tensor([3, 4, 5], device='cuda', dtype=torch.long)
 # scale up to see when it breaks
 for i in range(2, 10):
   print("trying w/ num nodes = 10^" + str(i))
