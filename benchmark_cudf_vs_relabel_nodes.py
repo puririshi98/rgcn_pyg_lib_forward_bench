@@ -3,17 +3,17 @@ import torch_geometric
 import torch
 import cupy
 # scale up to see when it breaks
-for i in range(2, 10):
+for i in range(2, 20):
   print("trying w/ num nodes = 10^" + str(i))
-  num_nodes = 10**i
-  data = torch_geometric.datasets.FakeDataset(avg_num_nodes=num_nodes).data
+  max_index = 10**i
+  edge_index = torch.randint(low=max_index/2, high=max_index, size=(2, 10**6))
   
   # edges
   
   graph = cudf.DataFrame(
       {
-          "u": cupy.asarray(data.edge_index[0].reshape(-1)),
-          "v": cupy.asarray(data.edge_index[1].reshape(-1)),
+          "u": cupy.asarray(edge_index[0].reshape(-1)),
+          "v": cupy.asarray(edge_index[1].reshape(-1)),
           
       }
   )
