@@ -6,7 +6,7 @@ import cupy
 for i in range(2, 20):
   print("trying w/ num nodes = 10^" + str(i))
   max_index = 10**i
-  edge_index = torch.randint(low=max_index/2, high=max_index, size=(2, 10**6))
+  edge_index = torch.randint(low=int(max_index/2), high=max_index, size=(2, int(10**6)))
   
   # edges
   
