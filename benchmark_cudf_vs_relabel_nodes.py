@@ -17,7 +17,6 @@ for i in range(2, 20):
           
       }
   )
-  del data
   nodes_to_keep = cudf.Series([3, 4, 5], name="nodes")
   
   mask = graph.u.isin(nodes_to_keep) & graph.v.isin(nodes_to_keep)
