@@ -164,5 +164,4 @@ def test_deployment_pyg():
 
     ap2 = average_precision_score(labels, preds)
     print(ap, ap2)
-    print("time to score:", time.time() - since)
     torch.cuda.empty_cache()
