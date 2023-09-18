@@ -150,7 +150,7 @@ def test_deployment_pyg():
         inference_cluster=inference_cluster,
         n_rounds=10,
     )
-    wrk.deploy("/tmp/gp_deployment_outputs/", triton_batch_size=8192,) #downstream=True)
+    wrk.deploy("/tmp/gp_deployment_outputs/", triton_batch_size=8192, downstream=True)
     wrk.launch_inference_server()
     since=time.time()
     b = wrk.pydep.run_inference_on_triton(dataloader=wrk.gp_xgb.triton_dataloader())
