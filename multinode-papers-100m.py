@@ -18,6 +18,9 @@ warnings.filterwarnings("ignore")
 
 # (TODO) insert slurm commands to run
 
+# results w/ default args on 2 nodes: 
+# *copypaste*
+
 def pyg_num_work():
     num_work = None
     if hasattr(os, "sched_getaffinity"):
