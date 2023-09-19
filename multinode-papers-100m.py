@@ -12,7 +12,6 @@ from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
-from memory_monitor import MemoryMonitor
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -149,7 +148,6 @@ if __name__ == '__main__':
     all_pids = torch.zeros(dist.get_world_size(), dtype=torch.int64).to(device)
     all_pids[dist.get_rank()] = os.getpid()
     dist.all_reduce(all_pids)
-    monitor = MemoryMonitor(all_pids.tolist())
 
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
