@@ -16,12 +16,8 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-# srun -l -N2 --ntasks-per-node=<n> --container-workdir=<example_folder> \
-# --container-image=<insert_container_image_url> \
-# python3 -u multinode_papers100m_draft.py --epochs 2 --no-test
+# (TODO) insert slurm commands to run
 
-# mine:
-# srun -l -N2 --ntasks-per-node=2 --container-image=gitlab-master.nvidia.com:5005/dl/dgx/pyg:main-py3-devel python3 -u x.py --epochs 3 --no-test
 def pyg_num_work():
     num_work = None
     if hasattr(os, "sched_getaffinity"):
