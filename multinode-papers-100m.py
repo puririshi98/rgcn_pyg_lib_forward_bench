@@ -33,6 +33,27 @@ def pyg_num_work():
         num_work = os.cpu_count() / 2
     return int(num_work)
 
+_LOCAL_PROCESS_GROUP = None
+
+def create_local_process_group(num_workers_per_node):
+    global _LOCAL_PROCESS_GROUP
+    assert _LOCAL_PROCESS_GROUP is None
+    world_size = dist.get_world_size() if dist.is_initialized() else 1
+    rank = dist.get_rank() if dist.is_initialized() else 0
+    assert world_size % num_workers_per_node == 0
+
+    num_nodes = world_size // num_workers_per_node
+    node_rank = rank // num_workers_per_node
+    for i in range(num_nodes):
+        ranks_on_i = list(range(i * num_workers_per_node, (i + 1) * num_workers_per_node))
+        pg = dist.new_group(ranks_on_i)
+        if i == node_rank:
+            _LOCAL_PROCESS_GROUP = pg
+
+def get_local_process_group():
+    assert _LOCAL_PROCESS_GROUP is not None
+    return _LOCAL_PROCESS_GROUP
+
 
 class GCN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels):
