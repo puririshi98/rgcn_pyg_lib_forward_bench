@@ -69,7 +69,7 @@ class GCN(torch.nn.Module):
 
 
 def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
-              split_idx, num_classes, monitor):
+              split_idx, num_classes):
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
