@@ -111,7 +111,6 @@ def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
             if rank == 0 and i % 10 == 0:
                 print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
                       ", Loss: " + str(loss))
-                print(monitor.table({"batch":i}))
         if rank == 0:
             print("Average Training Iteration Time:",
                   (time.time() - start) / (i - 10), "s/iter")
@@ -164,7 +163,6 @@ if __name__ == '__main__':
     device_id = dist.get_rank(group=local_group) if dist.is_initialized() else 0
     torch.cuda.set_device(device_id)
     device = torch.device(device_id)
-    # setup mem monitor
     all_pids = torch.zeros(dist.get_world_size(), dtype=torch.int64).to(device)
     all_pids[dist.get_rank()] = os.getpid()
     dist.all_reduce(all_pids)
