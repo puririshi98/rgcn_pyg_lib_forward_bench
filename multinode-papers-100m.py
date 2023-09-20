@@ -179,4 +179,4 @@ if __name__ == '__main__':
     print("Data =", data)
     print('Using', nprocs, 'GPUs...')
     run_train(device, data, nprocs, model, args.epochs, args.batch_size,
-                         args.fan_out, split_idx, dataset.num_classes, monitor)
+                         args.fan_out, split_idx, dataset.num_classes)
