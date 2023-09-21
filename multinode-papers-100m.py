@@ -76,6 +76,7 @@ def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
     os.environ['NVSHMEM_SYMMETRIC_SIZE'] = "107374182400"
+    # subset of training idxs for each rank
     split_idx['train'] = split_idx['train'].split(
         split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
     model = model.to(device)
