@@ -186,3 +186,9 @@ if __name__ == '__main__':
     print('Using', nprocs, 'GPUs...')
     run_train(device, data, nprocs, model, args.epochs, args.batch_size,
                          args.fan_out, split_idx, dataset.num_classes)
+    
+    # import torch.multiprocessing as mp
+    # mp.spawn(
+    #      run_train, args=(device, data, nprocs, model, args.epochs, args.batch_size,
+    #                      args.fan_out, split_idx, dataset.num_classes),
+    #     nprocs=args.ngpu_per_node, join=True)
