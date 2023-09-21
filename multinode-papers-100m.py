@@ -16,7 +16,10 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-# (TODO) insert slurm commands to run
+#first srun --overlap -A <account> -p interactive -J <name> -N 2 -t 02:00:00 --pty bash
+# ->
+# srun -l -N2 --ntasks-per-node=2 --overlap --container-image=<image_link> --container-name=cont \
+# --container-mounts=<location>:/workspace/dataset/ python3 multinode-papers-100m.py
 
 # results w/ default args on 2 nodes: 
 # *copypaste*
