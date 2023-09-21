@@ -153,13 +153,19 @@ if __name__ == '__main__':
     parser.add_argument(
         "--ngpu_per_node",
         type=int,
-        default="3",
+        default="2",
         help="number of GPU(s) for each node for multi-gpu training,",
+    )
+    parser.add_argument(
+        "--num_nodes",
+        type=int,
+        default="2",
+        help="number of compute nodes for multi-node-multi-gpu training",
     )
     args = parser.parse_args()
     # setup multi node
     torch.distributed.init_process_group("nccl")
-    nprocs = dist.get_world_size() * args.ngpu_per_node
+    nprocs = args.num_nodes * args.ngpu_per_node
     create_local_process_group(args.ngpu_per_node, nprocs)
     local_group = get_local_process_group()
     device_id = dist.get_rank(group=local_group) if dist.is_initialized() else 0
