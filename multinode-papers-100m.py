@@ -164,6 +164,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     # setup multi node
+    print("initializing distributed...")
     nprocs = args.num_nodes * args.ngpu_per_node
     torch.distributed.init_process_group("nccl", world_size=nprocs)
     create_local_process_group(args.ngpu_per_node, nprocs)
@@ -174,7 +175,7 @@ if __name__ == '__main__':
     all_pids = torch.zeros(dist.get_world_size(), dtype=torch.int64).to(device)
     all_pids[dist.get_rank()] = os.getpid()
     dist.all_reduce(all_pids)
-
+    print("Loading dataset...")
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
 
