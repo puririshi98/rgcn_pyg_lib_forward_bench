@@ -151,7 +151,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--ngpu_per_node",
         type=int,
-        default="1",
+        default="2",
         help="number of GPU(s) for each node for multi-gpu training,",
     )
     args = parser.parse_args()
