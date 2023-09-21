@@ -37,10 +37,9 @@ def pyg_num_work():
 
 _LOCAL_PROCESS_GROUP = None
 
-def create_local_process_group(num_workers_per_node):
+def create_local_process_group(num_workers_per_node, world_size):
     global _LOCAL_PROCESS_GROUP
     assert _LOCAL_PROCESS_GROUP is None
-    world_size = dist.get_world_size() if dist.is_initialized() else 1
     rank = dist.get_rank() if dist.is_initialized() else 0
     assert world_size % num_workers_per_node == 0, "world_size=" + str(world_size)
 
@@ -160,8 +159,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # setup multi node
     torch.distributed.init_process_group("nccl")
-    nprocs = dist.get_world_size()
-    create_local_process_group(args.ngpu_per_node)
+    nprocs = dist.get_world_size() * args.ngpu_per_node
+    create_local_process_group(args.ngpu_per_node, nprocs)
     local_group = get_local_process_group()
     device_id = dist.get_rank(group=local_group) if dist.is_initialized() else 0
     torch.cuda.set_device(device_id)
