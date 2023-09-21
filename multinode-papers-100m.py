@@ -164,8 +164,8 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     # setup multi node
-    torch.distributed.init_process_group("nccl")
     nprocs = args.num_nodes * args.ngpu_per_node
+    torch.distributed.init_process_group("nccl", world_size=nprocs)
     create_local_process_group(args.ngpu_per_node, nprocs)
     local_group = get_local_process_group()
     device_id = dist.get_rank(group=local_group) if dist.is_initialized() else 0
