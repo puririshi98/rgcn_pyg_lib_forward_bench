@@ -1,3 +1,45 @@
+'''
+in terminal 1:
+srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
+
+in terminal 2:
+squeue -u <slurm-unix-account-id>
+then
+export jobid=<>
+
+then
+
+srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid \
+--container-image=<image_url> --container-name=cont \
+--container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
+
+srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid \
+--container-name=cont-rp-9-22 \
+--container-mounts=/lustre/fsw/dlfw/dlfw-pyg/riship/ogb-papers100m/:/workspace/dataset/ \
+python3 multinode-papers100m-gcn.py --ngpu_per_node 3
+
+
+
+Results:
+
+Data = Data(num_nodes=111059956, edge_index=[2, 1615685872], x=[111059956, 128], node_year=[111059956, 1], y=[111059956])
+Using 6 GPUs...
+Beginning training...
+Epoch: 0, Iteration: 1570, Loss: tensor(2.3715, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.00961135015664843 s/iter
+Validation Accuracy: 40.0000%
+Average Inference Iteration Time: 0.05930390887790256 s/iter
+Epoch: 1, Iteration: 1570, Loss: tensor(2.3669, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.009306145814043982 s/iter
+Validation Accuracy: 40.0781%
+Average Inference Iteration Time: 0.05451994472079807 s/iter
+Epoch: 2, Iteration: 1570, Loss: tensor(2.3352, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.009185380617981152 s/iter
+Validation Accuracy: 40.0234%
+Average Inference Iteration Time: 0.06007050673166911 s/iter
+Test Accuracy: 24.8861%
+
+'''
 import argparse
 import os
 import time
@@ -16,10 +58,6 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-# (TODO) insert slurm commands to run
-
-# results w/ default args on 2 nodes: 
-# *copypaste*
 
 def pyg_num_work():
     num_work = None
@@ -70,7 +108,6 @@ class GCN(torch.nn.Module):
 
 def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
               split_idx, num_classes):
-    print("worldsize inside run_train=", dist.get_world_size())
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
