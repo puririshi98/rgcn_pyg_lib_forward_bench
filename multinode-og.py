@@ -75,6 +75,9 @@ def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
     os.environ['NVSHMEM_SYMMETRIC_SIZE'] = "107374182400"
+    if rank == 0:
+        print("Data =", data)
+        print('Using', nprocs, 'GPUs...')
     split_idx['train'] = split_idx['train'].split(
         split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
     model = model.to(device)
@@ -158,8 +161,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # setup multi node
     torch.distributed.init_process_group("nccl")
-    nprocs = dist.get_world_size()
-    print("Nprocs=", nprocs)
+    nprocs = dist.get_world_size()    
     create_local_process_group(args.ngpu_per_node)
     local_group = get_local_process_group()
     device_id = dist.get_rank(group=local_group) if dist.is_initialized() else 0
@@ -176,7 +178,5 @@ if __name__ == '__main__':
     data.y = data.y.reshape(-1)
     model = GCN(dataset.num_features, args.hidden_channels,
                 dataset.num_classes)
-    print("Data =", data)
-    print('Using', nprocs, 'GPUs...')
     run_train(device, data, nprocs, model, args.epochs, args.batch_size,
                          args.fan_out, split_idx, dataset.num_classes)
