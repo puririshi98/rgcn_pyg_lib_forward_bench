@@ -121,26 +121,28 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs, batch_size
     model = DistributedDataParallel(model, device_ids=[loc_id])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
+    num_work = pyg_num_work(ngpu_per_node)
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size,
-                                  num_workers=pyg_num_work(ngpu_per_node))
+                                  num_workers=num_work)
     if rank == 0:
         eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['valid'],
                                      batch_size=batch_size,
-                                     num_workers=pyg_num_work(1))
+                                     num_workers=num_work)
         test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['test'],
                                      batch_size=batch_size,
-                                     num_workers=pyg_num_work(1))
-    eval_steps = 100
+                                     num_workers=num_work)
+    eval_steps = 1000
+    warmup_steps = 100
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(device)
     if rank == 0:
         print("Beginning training...")
     for epoch in range(epochs):
         for i, batch in enumerate(train_loader):
-            if i >= 10:
+            if i >= warmup_steps:
                 start = time.time()
             batch = batch.to(device)
             batch.y = batch.y.to(torch.long)
@@ -160,7 +162,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs, batch_size
                 for i, batch in enumerate(eval_loader):
                     if i >= eval_steps:
                         break
-                    if i >= 10:
+                    if i >= warmup_steps:
                         start = time.time()
                     batch = batch.to(device)
                     batch.y = batch.y.to(torch.long)
@@ -169,7 +171,7 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs, batch_size
                                    batch.y[:batch_size])
             print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
             print("Average Inference Iteration Time:",
-                  (time.time() - start) / (i - 10), "s/iter")
+                  (time.time() - start) / (i - warmup_steps), "s/iter")
     if rank == 0:
         acc_sum = 0.0
         with torch.no_grad():
