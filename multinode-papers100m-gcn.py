@@ -59,15 +59,15 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def pyg_num_work(world_size):
+def pyg_num_work(ngpu_per_node):
     num_work = None
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_work = len(os.sched_getaffinity(0)) / (2 * world_size)
+            num_work = len(os.sched_getaffinity(0)) / (2 * ngpu_per_node)
         except Exception:
             pass
     if num_work is None:
-        num_work = os.cpu_count() / (2 * world_size)
+        num_work = os.cpu_count() / (2 * ngpu_per_node)
     return int(num_work)
 
 _LOCAL_PROCESS_GROUP = None
@@ -106,7 +106,7 @@ class GCN(torch.nn.Module):
         return x
 
 
-def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
+def run_train(device, data, world_size, ngpu_per_node, model, epochs, batch_size, fan_out,
               split_idx, num_classes):
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
@@ -124,7 +124,7 @@ def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size,
-                                  num_workers=pyg_num_work(world_size))
+                                  num_workers=pyg_num_work(ngpu_per_node))
     if rank == 0:
         eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['valid'],
@@ -215,5 +215,5 @@ if __name__ == '__main__':
     data.y = data.y.reshape(-1)
     model = GCN(dataset.num_features, args.hidden_channels,
                 dataset.num_classes)
-    run_train(device, data, nprocs, model, args.epochs, args.batch_size,
+    run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs, args.batch_size,
                          args.fan_out, split_idx, dataset.num_classes)
