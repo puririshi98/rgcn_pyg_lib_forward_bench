@@ -124,16 +124,16 @@ def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size,
-                                  num_workers=pyg_num_work())
+                                  num_workers=pyg_num_work(world_size))
     if rank == 0:
         eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['valid'],
                                      batch_size=batch_size,
-                                     num_workers=pyg_num_work())
+                                     num_workers=pyg_num_work(1))
         test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['test'],
                                      batch_size=batch_size,
-                                     num_workers=pyg_num_work())
+                                     num_workers=pyg_num_work(1))
     eval_steps = 100
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(device)
     if rank == 0:
