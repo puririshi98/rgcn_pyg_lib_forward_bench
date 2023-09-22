@@ -25,19 +25,23 @@ Results:
 Data = Data(num_nodes=111059956, edge_index=[2, 1615685872], x=[111059956, 128], node_year=[111059956, 1], y=[111059956])
 Using 6 GPUs...
 Beginning training...
-Epoch: 0, Iteration: 1570, Loss: tensor(2.3361, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.0027672332651259273 s/iter
-Validation Accuracy: 32.7789%
-Average Inference Iteration Time: 0.002870052713468026 s/iter
-Epoch: 1, Iteration: 1570, Loss: tensor(2.3817, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.002076991470405339 s/iter
-Validation Accuracy: 32.7853%
-Average Inference Iteration Time: 0.002447932347621353 s/iter
-Epoch: 2, Iteration: 1570, Loss: tensor(2.3389, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.002640351662644967 s/iter
-Validation Accuracy: 32.6032%
-Average Inference Iteration Time: 0.0023462598579076536 s/iter
-0: Test Accuracy: 24.1370%
+
+Epoch: 0, Iteration: 1570, Loss: tensor(2.7372, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.0022558025027757116 s/iter
+Validation Accuracy: 33.1712%
+Average Inference Iteration Time: 0.002441989262174637 s/iter
+
+Epoch: 1, Iteration: 1570, Loss: tensor(2.6074, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.002187901319104231 s/iter
+Validation Accuracy: 32.2733%
+Average Inference Iteration Time: 0.002225210835015855 s/iter
+
+Epoch: 2, Iteration: 1570, Loss: tensor(2.5593, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.002199090496994302 s/iter
+Validation Accuracy: 33.9588%
+Average Inference Iteration Time: 0.003229572181006499 s/iter
+Test Accuracy: 24.5902%
+
 
 '''
 import argparse
