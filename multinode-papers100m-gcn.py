@@ -25,19 +25,19 @@ Results:
 Data = Data(num_nodes=111059956, edge_index=[2, 1615685872], x=[111059956, 128], node_year=[111059956, 1], y=[111059956])
 Using 6 GPUs...
 Beginning training...
-Epoch: 0, Iteration: 1570, Loss: tensor(2.3715, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.00961135015664843 s/iter
-Validation Accuracy: 40.0000%
-Average Inference Iteration Time: 0.05930390887790256 s/iter
-Epoch: 1, Iteration: 1570, Loss: tensor(2.3669, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.009306145814043982 s/iter
-Validation Accuracy: 40.0781%
-Average Inference Iteration Time: 0.05451994472079807 s/iter
-Epoch: 2, Iteration: 1570, Loss: tensor(2.3352, device='cuda:0', grad_fn=<NllLossBackward0>)
-Average Training Iteration Time: 0.009185380617981152 s/iter
-Validation Accuracy: 40.0234%
-Average Inference Iteration Time: 0.06007050673166911 s/iter
-Test Accuracy: 24.8861%
+Epoch: 0, Iteration: 1570, Loss: tensor(2.3361, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.0027672332651259273 s/iter
+Validation Accuracy: 32.7789%
+Average Inference Iteration Time: 0.002870052713468026 s/iter
+Epoch: 1, Iteration: 1570, Loss: tensor(2.3817, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.002076991470405339 s/iter
+Validation Accuracy: 32.7853%
+Average Inference Iteration Time: 0.002447932347621353 s/iter
+Epoch: 2, Iteration: 1570, Loss: tensor(2.3389, device='cuda:0', grad_fn=<NllLossBackward0>)
+Average Training Iteration Time: 0.002640351662644967 s/iter
+Validation Accuracy: 32.6032%
+Average Inference Iteration Time: 0.0023462598579076536 s/iter
+0: Test Accuracy: 24.1370%
 
 '''
 import argparse
@@ -125,15 +125,18 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs, batch_size
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size,
+                                  shuffle=True,
                                   num_workers=num_work)
     if rank == 0:
         eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['valid'],
                                      batch_size=batch_size,
+                                     shuffle=True,
                                      num_workers=num_work)
         test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['test'],
                                      batch_size=batch_size,
+                                     shuffle=False,
                                      num_workers=num_work)
     eval_steps = 1000
     warmup_steps = 100
