@@ -59,15 +59,15 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def pyg_num_work():
+def pyg_num_work(world_size):
     num_work = None
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_work = len(os.sched_getaffinity(0)) / 2
+            num_work = len(os.sched_getaffinity(0)) / (2 * world_size)
         except Exception:
             pass
     if num_work is None:
-        num_work = os.cpu_count() / 2
+        num_work = os.cpu_count() / (2 * world_size)
     return int(num_work)
 
 _LOCAL_PROCESS_GROUP = None
