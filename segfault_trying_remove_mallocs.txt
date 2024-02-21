@@ -1,0 +1,113 @@
+Caught signal 11 (Segmentation fault: address not mapped to object at address (nil))
+==== backtrace (tid:   3823) ====
+ 0 0x0000000000042520 __sigaction()  ???:0
+ 1 0x00000000000c3f9a pyg::ops::(anonymous namespace)::grouped_matmul_out_kernel()  ???:0
+ 2 0x00000000000c5b97 pyg::ops::(anonymous namespace)::segment_matmul_kernel()  ???:0
+ 3 0x00000000000c7ccb c10::impl::wrap_kernel_functor_unboxed_<c10::impl::detail::WrapFunctionIntoFunctor_<c10::CompileTimeFunctionPointer<at::Tensor (at::Tensor const&, at::Tensor const&, at::Tensor const&), &pyg::ops::(anonymous namespace)::segment_matmul_kernel>, at::Tensor, c10::guts::typelist::typelist<at::Tensor const&, at::Tensor const&, at::Tensor const&> >, at::Tensor (at::Tensor const&, at::Tensor const&, at::Tensor const&)>::call()  ???:0
+ 4 0x00000000000d0741 pyg::ops::segment_matmul()  ???:0
+ 5 0x0000000000094dba torch::autograd::Function<pyg::ops::(anonymous namespace)::SegmentMatmul>::apply<pyg::ops::(anonymous namespace)::SegmentMatmul, at::Tensor const&, at::Tensor const&, at::Tensor const&>()  matmul_kernel.cpp:0
+ 6 0x0000000000095900 c10::impl::make_boxed_from_unboxed_functor<c10::impl::detail::WrapFunctionIntoFunctor_<c10::CompileTimeFunctionPointer<at::Tensor (at::Tensor const&, at::Tensor const&, at::Tensor const&), &pyg::ops::(anonymous namespace)::segment_matmul_autograd>, at::Tensor, c10::guts::typelist::typelist<at::Tensor const&, at::Tensor const&, at::Tensor const&> >, false>::call()  matmul_kernel.cpp:0
+ 7 0x0000000004817624 c10::Dispatcher::callBoxed()  register_c10_ops.cpp:0
+ 8 0x000000000085fdb4 torch::jit::invokeOperatorFromPython()  ???:0
+ 9 0x000000000086067e torch::jit::_get_operation_for_overload_or_packet()  ???:0
+10 0x00000000007459e6 pybind11::cpp_function::initialize<torch::jit::initJITBindings(_object*)::{lambda(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)#194}::operator()(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const::{lambda(pybind11::args, pybind11::kwargs)#1}, pybind11::object, pybind11::args, pybind11::kwargs, pybind11::name, pybind11::doc>(torch::jit::initJITBindings(_object*)::{lambda(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)#194}::operator()(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const::{lambda(pybind11::args, pybind11::kwargs)#1}&&, pybind11::object (*)(pybind11::args, pybind11::kwargs), pybind11::name const&, pybind11::doc const&)::{lambda(pybind11::detail::function_call&)#3}::_FUN()  init.cpp:0
+11 0x000000000039c407 pybind11::cpp_function::dispatcher()  :0
+12 0x000000000015fe0e PyObject_CallFunctionObjArgs()  ???:0
+13 0x000000000016f12b PyObject_Call()  ???:0
+14 0x000000000014b2c1 _PyEval_EvalFrameDefault()  ???:0
+15 0x0000000000155784 _PyObject_FastCallDictTstate()  ???:0
+16 0x000000000016b54c _PyObject_Call_Prepend()  ???:0
+17 0x00000000002841e0 PyInit__datetime()  ???:0
+18 0x00000000001565eb _PyObject_MakeTpCall()  ???:0
+19 0x000000000014f1f1 _PyEval_EvalFrameDefault()  ???:0
+20 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+21 0x000000000014e8a2 _PyEval_EvalFrameDefault()  ???:0
+22 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+23 0x000000000016f192 PyObject_Call()  ???:0
+24 0x000000000014b2c1 _PyEval_EvalFrameDefault()  ???:0
+25 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+26 0x000000000014b2c1 _PyEval_EvalFrameDefault()  ???:0
+27 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+28 0x000000000014e8a2 _PyEval_EvalFrameDefault()  ???:0
+29 0x000000000016e4e1 PyMethod_New()  ???:0
+30 0x000000000014e8a2 _PyEval_EvalFrameDefault()  ???:0
+31 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+32 0x000000000015582d _PyObject_FastCallDictTstate()  ???:0
+33 0x000000000016b54c _PyObject_Call_Prepend()  ???:0
+34 0x00000000002841e0 PyInit__datetime()  ???:0
+35 0x00000000001565eb _PyObject_MakeTpCall()  ???:0
+36 0x000000000014f908 _PyEval_EvalFrameDefault()  ???:0
+37 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+38 0x0000000000148f52 _PyEval_EvalFrameDefault()  ???:0
+39 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+40 0x000000000014b2c1 _PyEval_EvalFrameDefault()  ???:0
+41 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+42 0x000000000014e8a2 _PyEval_EvalFrameDefault()  ???:0
+43 0x000000000016e4e1 PyMethod_New()  ???:0
+44 0x000000000014e8a2 _PyEval_EvalFrameDefault()  ???:0
+45 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+46 0x000000000015582d _PyObject_FastCallDictTstate()  ???:0
+47 0x000000000016b54c _PyObject_Call_Prepend()  ???:0
+48 0x00000000002841e0 PyInit__datetime()  ???:0
+49 0x000000000016f12b PyObject_Call()  ???:0
+50 0x000000000014b2c1 _PyEval_EvalFrameDefault()  ???:0
+51 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+52 0x0000000000148e0d _PyEval_EvalFrameDefault()  ???:0
+53 0x000000000016e4e1 PyMethod_New()  ???:0
+54 0x000000000014a0d1 _PyEval_EvalFrameDefault()  ???:0
+55 0x000000000016070c _PyFunction_Vectorcall()  ???:0
+56 0x000000000014b2c1 _PyEval_EvalFrameDefault()  ???:0
+=================================
+Fatal Python error: Segmentation fault
+
+Thread 0x00007f62b3ffe640 (most recent call first):
+  <no Python frame>
+
+Thread 0x00007f62b7fff640 (most recent call first):
+  <no Python frame>
+
+Thread 0x00007f6411990640 (most recent call first):
+  File "/usr/lib/python3.10/socket.py", line 293 in accept
+  File "/usr/local/lib/python3.10/dist-packages/pytest_rerunfailures.py", line 500 in run_server
+  File "/usr/lib/python3.10/threading.py", line 953 in run
+  File "/usr/lib/python3.10/threading.py", line 1016 in _bootstrap_inner
+  File "/usr/lib/python3.10/threading.py", line 973 in _bootstrap
+
+Current thread 0x00007f64135c9740 (most recent call first):
+  File "/usr/local/lib/python3.10/dist-packages/torch/_ops.py", line 681 in __call__
+  File "/usr/local/lib/python3.10/dist-packages/pyg_lib/ops/__init__.py", line 169 in segment_matmul
+  File "/opt/pyg/pyg-lib/test/ops/test_matmul.py", line 26 in test_segment_matmul_autograd
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/python.py", line 194 in pytest_pyfunc_call
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_callers.py", line 77 in _multicall
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_manager.py", line 115 in _hookexec
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_hooks.py", line 493 in __call__
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/python.py", line 1792 in runtest
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/runner.py", line 169 in pytest_runtest_call
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_callers.py", line 77 in _multicall
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_manager.py", line 115 in _hookexec
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_hooks.py", line 493 in __call__
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/runner.py", line 262 in <lambda>
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/runner.py", line 341 in from_call
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/runner.py", line 261 in call_runtest_hook
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/runner.py", line 222 in call_and_report
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/runner.py", line 133 in runtestprotocol
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/runner.py", line 114 in pytest_runtest_protocol
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_callers.py", line 77 in _multicall
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_manager.py", line 115 in _hookexec
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_hooks.py", line 493 in __call__
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/main.py", line 350 in pytest_runtestloop
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_callers.py", line 77 in _multicall
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_manager.py", line 115 in _hookexec
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_hooks.py", line 493 in __call__
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/main.py", line 325 in _main
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/main.py", line 271 in wrap_session
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/main.py", line 318 in pytest_cmdline_main
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_callers.py", line 77 in _multicall
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_manager.py", line 115 in _hookexec
+  File "/usr/local/lib/python3.10/dist-packages/pluggy/_hooks.py", line 493 in __call__
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/config/__init__.py", line 169 in main
+  File "/usr/local/lib/python3.10/dist-packages/_pytest/config/__init__.py", line 192 in console_main
+  File "/usr/local/bin/py.test", line 33 in <module>
+
+Extension modules: numpy.core._multiarray_umath, numpy.core._multiarray_tests, numpy.linalg._umath_linalg, numpy.fft._pocketfft_internal, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._mt19937, numpy.random.mtrand, numpy.random._philox, numpy.random._pcg64, numpy.random._sfc64, numpy.random._generator, torch._C, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special (total: 20)
+Segmentation fault (core dumped)
