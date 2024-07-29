@@ -12,11 +12,10 @@ def get_raw_python(func_name_tokens):
 	max_hits = 0
 	max_hit_data_pt = None
 	for raw_data_pt in raw_dataset:
-		func_name = raw_data_pt["func_name"].split('.')[-1]
-		if func_name == ''.join(func_name_tokens) or func_name == '_'.join(func_name_tokens) or func_name == "_" + "_".join(func_name_tokens):
+		func_name = raw_data_pt["func_name"].split('.')[-1].lower()
+		if func_name == ''.join(func_name_tokens).lower() or func_name == '_'.join(func_name_tokens).lower() or func_name == "_" + "_".join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower():
 			func_str = raw_data_pt["whole_func_string"]
-			# start at the comments, since including the def string is cheating
-			return func_str[func_str.find('"""'):]
+			return func_str[4:(func_str.find(":"))], func_str[func_str.find('"""'):]
 	# if we can't find the function just return empty string
 	raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
 
@@ -30,7 +29,7 @@ for i in range(len(dataset)):
 	new_obj.x = torch.cat((old_obj.x, old_obj.node_is_attributed, old_obj.node_dfs_order, old_obj.node_depth), dim=1)
 	# extract raw python function for use by LLM 
 	func_name_tokens = old_obj.y
-	new_obj.desc = get_raw_python(func_name_tokens)
+	new_obj.func_signature, new_obj.desc  = get_raw_python(func_name_tokens)
 	# extract other data needed for GNN+LLM
 	new_obj.y = old_obj.y
 	new_obj.edge_index = old_obj.edge_index
