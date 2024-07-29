@@ -16,7 +16,6 @@ def get_raw_python(func_name_tokens):
 		if func_name == ''.join(func_name_tokens).lower() or func_name == '_'.join(func_name_tokens).lower() or func_name == "_" + "_".join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower():
 			func_str = raw_data_pt["whole_func_string"]
 			return func_str[4:(func_str.find(":"))], func_str[func_str.find('"""'):]
-	# if we can't find the function just return empty string
 	raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
 
 new_set = []
