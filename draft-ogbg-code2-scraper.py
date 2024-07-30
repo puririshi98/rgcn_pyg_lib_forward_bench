@@ -23,6 +23,7 @@ def get_raw_python(func_name_tokens):
 			# slightly slower check, only do if basic matches not hit
 			all_in = all([bool(token in func_name) for token in func_name_tokens])
 			last_pos = func_name.find(func_name_tokens[0])
+			all_in_order = True
 			for token in func_name_tokens[1:]:
 				cur_pos = func_name.find(token)
 				all_in_order = last_pos < cur_pos
