@@ -13,7 +13,8 @@ def get_raw_python(func_name_tokens):
 	max_hit_data_pt = None
 	for raw_data_pt in raw_dataset:
 		func_name = raw_data_pt["func_name"].split('.')[-1].lower()
-		if func_name == ''.join(func_name_tokens).lower() or func_name == '_'.join(func_name_tokens).lower() or func_name == "_" + "_".join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower() + "_" or func_name == "_" + '_'.join(func_name_tokens).lower() + "_":
+		all_in = all([bool(token in func_name) for token in func_name_tokens)
+		if func_name == ''.join(func_name_tokens).lower() or func_name == '_'.join(func_name_tokens).lower() or func_name == "_" + "_".join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower() + "_" or func_name == "_" + '_'.join(func_name_tokens).lower() + "_" or all_in:
 			func_str = raw_data_pt["whole_func_string"]
 			return func_str[4:(func_str.find(":"))], func_str[func_str.find('"""'):]
 	raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
