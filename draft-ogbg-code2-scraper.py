@@ -8,7 +8,7 @@ raw_dataset = datasets.concatenate_datasets([raw_dataset["train"], raw_dataset["
 def get_raw_python(func_name_tokens):
 	# the ordering of code_search_net does not match ogbg-code2
 	# have to search for matching python
-	# (TODO) use fast pythonic search methods (currently brute forcing way too slow)
+	# (TODO) use fast pythonic search methods (currently brute forcing is quite slow)
 	max_hits = 0
 	max_hit_data_pt = None
 	for raw_data_pt in raw_dataset:
