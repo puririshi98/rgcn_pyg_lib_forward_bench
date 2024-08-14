@@ -2,7 +2,7 @@ from ogb.graphproppred import PygGraphPropPredDataset
 from torch_geometric.data import Data
 import torch
 import datasets
-import tqdm
+from tqdm import tqdm
 dataset = PygGraphPropPredDataset(name="ogbg-code2")
 raw_dataset = datasets.load_dataset("claudios/code_search_net", "python")
 raw_dataset = datasets.concatenate_datasets([raw_dataset["train"], raw_dataset["validation"], raw_dataset["test"]])
