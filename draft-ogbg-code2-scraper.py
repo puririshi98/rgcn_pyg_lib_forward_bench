@@ -37,7 +37,9 @@ def get_raw_python(func_name_tokens):
 	raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
 
 new_set = []
-for i in range(len(dataset)):
+len_set = len(dataset)
+print("num_data_pts =", len_set)
+for i in range(len_set):
 	old_obj = dataset[i]
 	print("Iter", i)
 	print("old_obj =", old_obj)
