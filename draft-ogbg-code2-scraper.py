@@ -2,6 +2,7 @@ from ogb.graphproppred import PygGraphPropPredDataset
 from torch_geometric.data import Data
 import torch
 import datasets
+import tqdm
 dataset = PygGraphPropPredDataset(name="ogbg-code2")
 raw_dataset = datasets.load_dataset("claudios/code_search_net", "python")
 raw_dataset = datasets.concatenate_datasets([raw_dataset["train"], raw_dataset["validation"], raw_dataset["test"]])
@@ -38,11 +39,11 @@ def get_raw_python(func_name_tokens):
 
 new_set = []
 len_set = len(dataset)
-print("num_data_pts =", len_set)
-for i in range(len_set):
+#print("num_data_pts =", len_set)
+for i in tqdm(range(len_set)):
 	old_obj = dataset[i]
-	print("Iter", i)
-	print("old_obj =", old_obj)
+	#print("Iter", i)
+	#print("old_obj =", old_obj)
 	new_obj = Data()
 	# combine all node information into a single feature tensor, let the GNN+LLM figure it out
 	new_obj.x = torch.cat((old_obj.x, old_obj.node_is_attributed, old_obj.node_dfs_order, old_obj.node_depth), dim=1)
@@ -54,6 +55,6 @@ for i in range(len_set):
 	new_obj.edge_index = old_obj.edge_index
 	new_obj.num_nodes = old_obj.num_nodes
 	new_set.append(new_obj)
-	print("new_obj =", new_obj)
+	#print("new_obj =", new_obj)
 	del old_obj
 	
