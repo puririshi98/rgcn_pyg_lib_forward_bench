@@ -52,7 +52,6 @@ def get_raw_python_from_df(func_name_tokens):
 	# the ordering of code_search_net does not match ogbg-code2
 	# have to search for matching python
 	func_name = df.index
-	# (TODO, get this working)
 	basic_matches = (func_name == ''.join(func_name_tokens).lower()) | (func_name == '_'.join(func_name_tokens).lower()) | (func_name == "_" + "_".join(func_name_tokens).lower())
 	basic_matches = basic_matches | (func_name == "_" + ''.join(func_name_tokens).lower())
 	basic_matches = basic_matches | (func_name == "_" + ''.join(func_name_tokens).lower() + "_")
