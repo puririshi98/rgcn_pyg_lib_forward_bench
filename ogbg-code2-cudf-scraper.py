@@ -23,8 +23,10 @@ def get_raw_python_from_df(func_name_tokens):
 	# have to search for matching python
 	func_name = df.index
 	# (TODO, get this working)
-	basic_matches = func_name == ''.join(func_name_tokens).lower() or func_name == '_'.join(func_name_tokens).lower() or func_name == "_" + "_".join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower() or func_name == "_" + ''.join(func_name_tokens).lower() + "_" or func_name == "_" + '_'.join(func_name_tokens).lower() + "_"
-	all_in = all([bool(token in func_name) for token in func_name_tokens])
+	basic_matches = func_name == ''.join(func_name_tokens).lower() or func_name == '_'.join(func_name_tokens).lower() or func_name == "_" + "_".join(func_name_tokens).lower()
+	basic_matches = basic_matches or func_name == "_" + ''.join(func_name_tokens).lower()
+	basic_matches = basic_matches or func_name == "_" + ''.join(func_name_tokens).lower() + "_"
+	basic_matches = basic_matches or func_name == "_" + '_'.join(func_name_tokens).lower() + "_"	all_in = all([bool(token in func_name) for token in func_name_tokens])
 	last_pos = func_name.find(func_name_tokens[0])
 	all_in_order = True
 	for token in func_name_tokens[1:]:
