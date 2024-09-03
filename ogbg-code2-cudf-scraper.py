@@ -13,7 +13,7 @@ raw_dataset = datasets.concatenate_datasets([raw_dataset["train"], raw_dataset["
 
 
 def find_wierd_names(func_name_tokens):
-	for i, func_name in raw_dataset["func_name]":
+	for i, func_name in enumerate(raw_dataset["func_name"]):
 		# helper code to find wierd matches
 		# since its not clear how to apply such complex search to pandas
 		func_name = func_name.lower()
