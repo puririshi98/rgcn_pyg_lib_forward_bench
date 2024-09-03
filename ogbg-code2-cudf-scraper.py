@@ -55,7 +55,7 @@ def get_raw_python_from_df(func_name_tokens):
 	basic_matches = basic_matches | (func_name == "_" + ''.join(func_name_tokens).lower() + "_")
 	basic_matches = basic_matches | (func_name == "_" + '_'.join(func_name_tokens).lower() + "_")
 	basic_matches = basic_matches | (func_name == "_" + '_'.join(func_name_tokens).lower() + "_")
-	if func_name_tokens > 1:
+	if len(func_name_tokens) > 1:
 		basic_matches = basic_matches | (func_name == "_" + func_name_tokens[0].lower() + "_" + ''.join(func_name_tokens[1:]).lower())
 	matches = basic_matches
 	result = df[matches]
