@@ -37,7 +37,7 @@ def get_raw_python_from_df(func_name_tokens):
 			break
 		lost_pos = cur_pos
 	matches = basic_matches or (all_in and all_in_order)
-	result = df.loc[(matches)]
+	result = df[matches]
 	print(result)
 	if matches:
 		func_str = raw_data_pt["whole_func_string"]
