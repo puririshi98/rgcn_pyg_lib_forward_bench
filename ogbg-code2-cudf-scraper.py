@@ -11,6 +11,28 @@ ogbg_dataset = PygGraphPropPredDataset(name="ogbg-code2")
 raw_dataset = datasets.load_dataset("claudios/code_search_net", "python")
 raw_dataset = datasets.concatenate_datasets([raw_dataset["train"], raw_dataset["validation"], raw_dataset["test"]])
 
+
+def find_wierd_names(func_name_tokens):
+	for i, func_name in raw_dataset["func_name]":
+		# helper code to find wierd matches
+		# since its not clear how to apply such complex search to pandas
+		func_name = func_name.lower()
+		func_name_tokens = ["pandas", "sql", "builder"]
+		all_in = all([bool(token in func_name) for token in func_name_tokens])
+		last_pos = func_name.find(func_name_tokens[0])
+		all_in_order = True
+		for token in func_name_tokens[1:]:
+			cur_pos = func_name.find(token)
+			all_in_order = last_pos < cur_pos
+			if not all_in_order:
+				break
+			lost_pos = cur_pos
+		matches = (all_in & all_in_order)
+		if matches:
+			return raw_dataset["whole_func_string"][i]
+		else:
+			ValueError("nothing found for func_name_tokens =", func_name_tokens)
+			
 def make_raw_data_frame():
 	# Create a Data Frame with
 	# column 1: "func_name"
@@ -18,25 +40,6 @@ def make_raw_data_frame():
 	filtered_func_names = []
 	for i in raw_dataset["func_name"]:
 		split_name = i.split('.')
-		#####
-		# helper code to find wierd matches
-		# func_name = i.lower()
-		# func_name_tokens = ["new", "datetime", "index"]
-		# all_in = all([bool(token in func_name) for token in func_name_tokens])
-		# last_pos = func_name.find(func_name_tokens[0])
-		# all_in_order = True
-		# for token in func_name_tokens[1:]:
-		# 	cur_pos = func_name.find(token)
-		# 	all_in_order = last_pos < cur_pos
-		# 	if not all_in_order:
-		# 		break
-		# 	lost_pos = cur_pos
-		# matches = (all_in & all_in_order)
-		# ##
-		# if matches:
-		# 	print(i)
-		# 	quit()
-		#####
 		if len(split_name) > 1:
 			filtered_func_names.append(split_name[-1].lower())
 		else:
@@ -57,6 +60,7 @@ def get_raw_python_from_df(func_name_tokens):
 	basic_matches = basic_matches | (func_name == "_" + '_'.join(func_name_tokens).lower() + "_")
 	if len(func_name_tokens) > 1:
 		basic_matches = basic_matches | (func_name == "_" + func_name_tokens[0].lower() + "_" + ''.join(func_name_tokens[1:]).lower())
+		basic_matches = basic_matches | (func_name == ''.join(func_name_tokens[:-1]).lower() + "_" + func_name_tokens[-1].lower())
 	matches = basic_matches
 	result = df[matches]
 	if len(result) > 0:
@@ -68,7 +72,8 @@ def get_raw_python_from_df(func_name_tokens):
 		func_str = str(selected_result.iloc[0]["whole_func_string"])
 		#print(func_str)
 		return func_str[func_str.find("def"):(func_str.find(":"))], func_str[func_str.find('"""'):]
-	raise ValueError("nothing found for func_name_tokens =", func_name_tokens)
+	else:
+		func_str = find_wierd_names(func_name_tokens)
 
 new_set = []
 len_set = len(ogbg_dataset)
