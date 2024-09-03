@@ -69,11 +69,10 @@ def get_raw_python_from_df(func_name_tokens):
     		have no idea how to break these ties. If this proves to be a blocker for SOTA results,
       		will come back to figure out how to do this best."""
 		selected_result = result.sample()
-		func_str = str(selected_result.iloc[0]["whole_func_string"])
-		#print(func_str)
-		return func_str[func_str.find("def"):(func_str.find(":"))], func_str[func_str.find('"""'):]
+		func_str = str(selected_result.iloc[0]["whole_func_string"])		
 	else:
 		func_str = find_wierd_names(func_name_tokens)
+	return func_str[func_str.find("def"):(func_str.find(":"))], func_str[func_str.find('"""'):]
 
 new_set = []
 len_set = len(ogbg_dataset)
