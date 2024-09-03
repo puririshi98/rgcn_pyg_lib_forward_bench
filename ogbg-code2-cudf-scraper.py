@@ -45,8 +45,6 @@ def make_raw_data_frame():
 	df.set_index('func_name', inplace=True)
 	return df
 df = make_raw_data_frame()
-print(df)
-quit()
 def get_raw_python_from_df(func_name_tokens):
 	# the ordering of code_search_net does not match ogbg-code2
 	# have to search for matching python
