@@ -18,21 +18,25 @@ def make_raw_data_frame():
 	filtered_func_names = []
 	for i in raw_dataset["func_name"]:
 		split_name = i.split('.')
-		##
-		func_name_tokens = ["new", "datetime", "index"]
-		all_in = all([bool(token in func_name) for token in func_name_tokens])
-		last_pos = func_name.find(func_name_tokens[0])
-		all_in_order = True
-		for token in func_name_tokens[1:]:
-			cur_pos = func_name.find(token)
-			all_in_order = last_pos < cur_pos
-			if not all_in_order:
-				break
-			lost_pos = cur_pos
-		matches = (all_in & all_in_order)
-		##
-		if matches:
-			print("i")
+		#####
+		# helper code to find wierd matches
+		# func_name = i.lower()
+		# func_name_tokens = ["new", "datetime", "index"]
+		# all_in = all([bool(token in func_name) for token in func_name_tokens])
+		# last_pos = func_name.find(func_name_tokens[0])
+		# all_in_order = True
+		# for token in func_name_tokens[1:]:
+		# 	cur_pos = func_name.find(token)
+		# 	all_in_order = last_pos < cur_pos
+		# 	if not all_in_order:
+		# 		break
+		# 	lost_pos = cur_pos
+		# matches = (all_in & all_in_order)
+		# ##
+		# if matches:
+		# 	print(i)
+		# 	quit()
+		#####
 		if len(split_name) > 1:
 			filtered_func_names.append(split_name[-1].lower())
 		else:
@@ -53,16 +57,8 @@ def get_raw_python_from_df(func_name_tokens):
 	basic_matches = basic_matches | (func_name == "_" + ''.join(func_name_tokens).lower() + "_")
 	basic_matches = basic_matches | (func_name == "_" + '_'.join(func_name_tokens).lower() + "_")
 	basic_matches = basic_matches | (func_name == "_" + '_'.join(func_name_tokens).lower() + "_")
-	# all_in = all([bool(token in func_name) for token in func_name_tokens])
-	# last_pos = func_name.find(func_name_tokens[0])
-	# all_in_order = True
-	# for token in func_name_tokens[1:]:
-	# 	cur_pos = func_name.find(token)
-	# 	all_in_order = last_pos < cur_pos
-	# 	if not all_in_order:
-	# 		break
-	# 	lost_pos = cur_pos
-	# matches = (basic_matches) | (all_in & all_in_order)
+	if func_name_tokens > 1:
+		basic_matches = basic_matches | (func_name == "_" + func_name_tokens[0].lower() + "_" + ''.join(func_name_tokens[1:]).lower())
 	matches = basic_matches
 	result = df[matches]
 	if len(result) > 0:
